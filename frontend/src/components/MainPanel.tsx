@@ -69,7 +69,7 @@ export function MainPanel({ items, onAddItem, onEditItem, onViewDetails }: MainP
     exportToCSV(filteredItems);
   };
 
-  return <iframe src="http://localhost:3001/county" className="w-full h-100vh"/>
+  return <iframe src="http://localhost:3001/county" className="w-full min-h-screen"/>
 
   return (
     <div className="max-w-7xl mx-auto">

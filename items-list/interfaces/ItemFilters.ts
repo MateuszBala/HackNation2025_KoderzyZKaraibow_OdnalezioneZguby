@@ -1,27 +1,9 @@
-export type ItemType = 'small' | 'medium' | 'big';
-
-export interface Item{
-    id: number;
-    title: string;
-    type: "small"|"medium"|"big";
-}
-
-export interface FoundItem {
-    id:number;
-    items: Item[];
-    owner?: string;
-    returned: boolean;
-    district: string;
-    found_location: string;
-    return_location: string;
-    createdAt: Date;
-    foundDate: Date;
-    returnTermin: Date;
-}
+import { ItemType } from "./Item";
 
 export interface ItemFilters {
-  title: string;
-  type: ItemType | '';
-  location: string;
-  returned: boolean | '';
+  title: string, 
+  type: ItemType|"", 
+  category: string, 
+  foundLocation: string, 
+  foundDate: Date
 }
