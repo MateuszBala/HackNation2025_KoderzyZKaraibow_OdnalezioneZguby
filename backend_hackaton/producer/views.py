@@ -1,21 +1,58 @@
+from dataclasses import dataclass, asdict
+from datetime import date
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from . import filters
 
+@dataclass
+class Anouncement:
+    anouncement_id: int
+    items: list[str]
+    owner: str               #  tylko dla uprawnionego użytkownika
+    returned: bool
+    district: str            #  powiat
+    foundLocation: str       #  miasto, ulica || miejsce
+    returnLocation: str      #  miasto, ulica || miejsce
+    createdAt: date
+    foundDate: date
+    returnTermin: date       #  termin odbioru
+
+@dataclass
+class Item:
+    item_id: int
+    title: str
+    item_type: str              #  (enum(“small”, “medium”, “big”))
+    category: str
+    isDestroyed: bool
+
+
+@dataclass
+class DataRecord:
+    Anouncement: Anouncement
+    item: Item
+
+
 def read_all_records(count):
     return str(count)
 
-@csrf_exempt
-def index(request):
-    if request.method == "GET":
-        return HttpResponse("Static GET response from producer")
-    if request.method == "POST":
-        return HttpResponse("Static POST response from producer")
+def read_anouncement_id(anouncement_id):
+    return ""
+
+def record_to_xml(record: DataRecord):
+    return "Output of record_to_xml"
+
+def multiple_records_to_xml(records: list[DataRecord]):
+    return "Output of multiple_records_to_xml"
 
 @csrf_exempt
 def get_id(request):
     if request.method == "GET":
-        return read_all_records(count = 100)
+        anouncement_id = request.GET.get("distinkt")
+        record = read_anouncement_id(anouncement_id)
+        out_xml_str = record_to_xml(record)
+        return HttpResponse(f"Dynamic POST response from producer \'{out_xml_str}\'")
+    else:
+        return HttpResponse("Static POST response from producer")
 
 @csrf_exempt
 def get_all(request):
@@ -45,4 +82,5 @@ def get_all(request):
         found_date = request.GET.get("found_date")
         if found_date:
             records = filters.filter_by_found_date(records, found_date)
-        return HttpResponse(f"This is placeholder for get_all request {records}")
+            out_xml_str = multiple_records_to_xml(records)
+        return HttpResponse(f"This is placeholder for get_all request {out_xml_str}")
