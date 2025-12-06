@@ -7,3 +7,18 @@ def index(request):
         return HttpResponse("Static GET response from consumer")
     if request.method == "POST":
         return HttpResponse("Static POST response from consumer")
+
+@csrf_exempt
+def creds(request):
+    if request.method == "POST":
+        return HttpResponse("This is placeholder for creds request")
+
+@csrf_exempt
+def add(request):
+    if request.method == "POST":
+        return HttpResponse("This is placeholder for add request")
+
+@csrf_exempt
+def edit(request):
+    if request.method == "PUT":
+        return HttpResponse("This is placeholder for edit request")
