@@ -1,4 +1,4 @@
-def filter_by_id(records, id):
+def filter_by_anouncement_id(records, id):
     return ""
 
 def filter_by_distinkt(records, distinkt):

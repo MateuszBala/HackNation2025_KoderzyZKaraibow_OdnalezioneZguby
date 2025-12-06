@@ -3,11 +3,21 @@ from datetime import date
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from . import filters
+from typing import List
+from enum import Enum
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
+
+class ItemType(Enum):
+    SMALL = "small"
+    MEDIUM = "medium"
+    BIG = "big"
 
 @dataclass
 class Anouncement:
     anouncement_id: int
-    items: list[str]
+    document_identyficator: str
+    items: List[str]
     owner: str               #  tylko dla uprawnionego użytkownika
     returned: bool
     district: str            #  powiat
@@ -21,7 +31,7 @@ class Anouncement:
 class Item:
     item_id: int
     title: str
-    item_type: str              #  (enum(“small”, “medium”, “big”))
+    item_type: ItemType
     category: str
     is_destroyed: bool
 
@@ -30,6 +40,25 @@ class DataRecord:
     anouncement: Anouncement
     item: Item
 
+#  FOR TEST ONLY
+test_data_record = DataRecord(
+    Anouncement(1,
+                "abc1",
+                ["12","34"],
+                "mrb",
+                True,
+                "dist9",
+                "Byd",
+                "Byd",
+                date(2025, 12, 12),
+                date(2025, 12, 12),
+                date(2025, 12, 12)),
+    Item(1,
+         "title",
+         ItemType("small"),
+         "exp",
+         True))
+#  END OF TEST DATA
 
 def read_all_records(count):
     return str(count)
@@ -38,16 +67,46 @@ def read_anouncement_id(anouncement_id):
     return ""
 
 def record_to_xml(record: DataRecord):
-    return "Output of record_to_xml"
+    root = ET.Element("DataRecord")
+    anouncement = ET.SubElement(root, "Anouncement")
+    anouncement.set("id", str(record.anouncement.anouncement_id))
 
-def multiple_records_to_xml(records: list[DataRecord]):
+    ET.SubElement(anouncement, "owner").text = record.anouncement.owner
+    ET.SubElement(anouncement, "district").text = record.anouncement.district
+    ET.SubElement(anouncement, "foundLocation").text = record.anouncement.found_location
+    ET.SubElement(anouncement, "returnLocation").text = record.anouncement.return_location
+    ET.SubElement(anouncement, "returned").text = str(record.anouncement.returned)
+
+    ET.SubElement(anouncement, "createdAt").text = record.anouncement.created_at.isoformat()
+    ET.SubElement(anouncement, "foundDate").text = record.anouncement.found_date.isoformat()
+    ET.SubElement(anouncement, "returnDate").text = record.anouncement.return_date.isoformat()
+
+    items_elem = ET.SubElement(anouncement, "items")
+    for item_title in record.anouncement.items:
+        ET.SubElement(items_elem, "item").text = item_title
+
+    item = ET.SubElement(root, "Item")
+    item.set("id", str(record.item.item_id))
+    ET.SubElement(item, "title").text = record.item.title
+    ET.SubElement(item, "type").text = record.item.item_type.value
+    ET.SubElement(item, "category").text = record.item.category
+    ET.SubElement(item, "isDestroyed").text = str(record.item.is_destroyed)
+
+    # Pretty print XML
+    rough_string = ET.tostring(root, 'unicode')
+    reparsed = minidom.parseString(rough_string)
+    return reparsed.toprettyxml(indent="  ")
+
+def multiple_records_to_xml(records: List[DataRecord]):
     return "Output of multiple_records_to_xml"
 
 @csrf_exempt
 def get_id(request):
     if request.method == "GET":
         anouncement_id = request.GET.get("distinkt")
-        record = read_anouncement_id(anouncement_id)
+        records = read_all_records(count=-1)
+        # record = filter_by_anouncement_id(records, anouncement_id)
+        record = test_data_record
         out_xml_str = record_to_xml(record)
         return HttpResponse(f"Dynamic POST response from producer \'{out_xml_str}\'")
     else:
