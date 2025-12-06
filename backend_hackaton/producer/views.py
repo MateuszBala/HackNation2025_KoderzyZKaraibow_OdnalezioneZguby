@@ -11,11 +11,11 @@ class Anouncement:
     owner: str               #  tylko dla uprawnionego użytkownika
     returned: bool
     district: str            #  powiat
-    foundLocation: str       #  miasto, ulica || miejsce
-    returnLocation: str      #  miasto, ulica || miejsce
-    createdAt: date
-    foundDate: date
-    returnTermin: date       #  termin odbioru
+    found_location: str       #  miasto, ulica || miejsce
+    return_location: str      #  miasto, ulica || miejsce
+    created_at: date
+    found_date: date
+    return_date: date       #  termin odbioru
 
 @dataclass
 class Item:
@@ -23,12 +23,11 @@ class Item:
     title: str
     item_type: str              #  (enum(“small”, “medium”, “big”))
     category: str
-    isDestroyed: bool
-
+    is_destroyed: bool
 
 @dataclass
 class DataRecord:
-    Anouncement: Anouncement
+    anouncement: Anouncement
     item: Item
 
 
