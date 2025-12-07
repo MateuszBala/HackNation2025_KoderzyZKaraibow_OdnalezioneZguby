@@ -1,12 +1,13 @@
-import { ItemFilters } from "@/interfaces/ItemFilters";
-import { Card } from "./ui/Card";
-import { DatePicker, FormField, Input, Select } from "./ui/FormField";
-import { Button } from "./ui/Button";
+import { AnnouncementFilter } from "@/types/types";
+import { Card } from "../ui/Card";
+import { DatePicker, FormField, Input, Select } from "../ui/FormField";
 import { formatToFieldDate } from "@/utils/helpers";
+import { Button } from "../ui/Button";
+import { districts } from "../Forms/AddEditForm";
 
 interface FilterCardProps {
-  filters: ItemFilters;
-  onFilterChange: (filters: ItemFilters) => void;
+  filters: AnnouncementFilter;
+  onFilterChange: (filters: AnnouncementFilter) => void;
   onApply: () => void;
   onClear: () => void;
 }
@@ -15,6 +16,22 @@ export function Filters({ filters, onFilterChange, onApply, onClear }: FilterCar
   return (
     <Card title="Filtry">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+          <FormField label="Powiat">
+            <Select
+              value={filters.district}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onFilterChange({ ...filters, district: e.target.value })
+              }            
+            >
+              <option value="">Wszystkie powiaty</option>
+              {districts.map((district) => (
+                <option key={district} value={district}>
+                  {district}
+                </option>
+              ))}
+            </Select>
+        </FormField>
+
         <FormField label="Nazwa przedmiotu" id="filter-title">
           <Input
             id="filter-title"
@@ -23,6 +40,18 @@ export function Filters({ filters, onFilterChange, onApply, onClear }: FilterCar
             value={filters.title}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               onFilterChange({ ...filters, title: e.target.value })
+            }
+          />
+        </FormField>
+
+        <FormField label="Nazwa dokumentu" id="filter-doc">
+          <Input
+            id="filter-doc"
+            type="text"
+            placeholder="Wpisz nazwę..."
+            value={filters.documentIdent}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              onFilterChange({ ...filters, documentIdent: e.target.value })
             }
           />
         </FormField>

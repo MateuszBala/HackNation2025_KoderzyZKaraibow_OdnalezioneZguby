@@ -6,8 +6,8 @@ export interface FoundAnnouncement {
     owner?: string;
     returned: boolean;
     district: string;
-    found_location: string;
-    return_location: string;
+    foundLocation: string;
+    returnLocation: string;
     createdAt: Date;
     foundDate: Date;
     returnTermin: Date;

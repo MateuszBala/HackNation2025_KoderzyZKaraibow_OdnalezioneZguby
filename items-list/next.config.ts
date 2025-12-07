@@ -8,11 +8,11 @@ const nextConfig:NextConfig = {
         headers: [
           {
             key: "X-Frame-Options",
-            value: "ALLOWALL" // pozwala na iframe
+            value: "ALLOWALL"
           },
           {
             key: "Content-Security-Policy",
-            value: "frame-ancestors *" // pozwala każdemu osadzać aplikację
+            value: "frame-ancestors *"
           }
         ]
       }

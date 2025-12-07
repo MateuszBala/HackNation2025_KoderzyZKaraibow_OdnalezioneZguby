@@ -1,10 +1,17 @@
-import { FoundItem, ItemType } from "@/interfaces/ItemFilters";
+import { ItemType } from "@/interfaces/Item";
 
 export function formatDate(date: Date): string {
   const day = date.getDate().toString().padStart(2, '0');
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const year = date.getFullYear();
   return `${day}.${month}.${year}`;
+}
+
+export function formatToFieldDate(date: Date): string {
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${year}-${month}-${day}`;
 }
 
 export function getTypeLabel(type: ItemType): string {

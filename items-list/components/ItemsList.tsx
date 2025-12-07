@@ -17,7 +17,7 @@ interface Params {
 }
 
 export default function ItemsList({office}: Params) {
-    const [items, setItems] = useState<FoundAnnouncement[]>([]);
+    const [announcements, setAnnouncements] = useState<FoundAnnouncement[]>([]);
     const [filters, setFilters] = useState<ItemFilters>(emptyFilters);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState<boolean>(true);
@@ -49,7 +49,7 @@ export default function ItemsList({office}: Params) {
             method: "GET",
         }).then(async (res)=>{
             if(res.ok){
-                setItems(await res.json());
+                setAnnouncements(await res.json());
                 setLoading(false);
             }
         }).catch(()=>{
@@ -69,10 +69,10 @@ export default function ItemsList({office}: Params) {
                 />
 
                 <ItemsTable
-                    items={items}
+                    announcements={announcements}
                     currentPage={currentPage}
                     itemsPerPage={itemsPerPage}
-                    totalItems={items.length}
+                    totalItems={announcements.length}
                     onPageChange={setCurrentPage}
                     error={error}
                     loading={loading}

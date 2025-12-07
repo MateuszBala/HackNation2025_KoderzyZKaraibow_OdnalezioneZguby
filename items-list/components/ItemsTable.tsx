@@ -1,11 +1,13 @@
 import { AlertCircle, ChevronLeft, ChevronRight, Package } from 'lucide-react';
 import { Card } from './ui/Card';
-import { formatDate, getDaysRemaining } from '@/utils/helpers';
-import { Button } from './ui/Button';
 import { FoundAnnouncement } from '@/interfaces/FoundAnnouncement';
+import { Item } from './Item';
+import { Button } from './ui/Button';
+import LoadingCard from './LoadingCard';
+import ErrorCard from './ErrorCard';
 
 interface ItemsTableProps {
-  items: FoundAnnouncement[];
+  announcements: FoundAnnouncement[];
   currentPage: number;
   itemsPerPage: number;
   totalItems: number;
@@ -15,7 +17,7 @@ interface ItemsTableProps {
 }
 
 export function ItemsTable({
-  items,
+  announcements,
   currentPage,
   itemsPerPage,
   totalItems,
@@ -28,29 +30,12 @@ export function ItemsTable({
   const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
 
   if (error)
-    return (
-      <Card>
-        <div className="text-center py-12">
-          <AlertCircle className="w-16 h-16 text-[#CCCCCC] mx-auto mb-4" />
-          <p className="text-[#666] mb-2">
-            Coś poszło nie tak!
-          </p>
-        </div>
-      </Card>
-    );
+    return <ErrorCard/>
 
   if (loading)
-    return (
-      <Card>
-        <div className="text-center py-12">
-          <p className="text-[#666] mb-2">
-            Ładowanie...
-          </p>
-        </div>
-      </Card>
-    );
+    return <LoadingCard/>
 
-  if (items.length === 0) {
+  if (announcements.length === 0) {
     return (
       <Card>
         <div className="text-center py-12">
@@ -70,36 +55,21 @@ export function ItemsTable({
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b-2 border-[#E5E5E5]">
-              <th className="text-left py-3 px-4">Nazwa przedmiotu</th>
-              <th className="text-left py-3 px-4">Typ</th>
-              <th className="text-left py-3 px-4">Lokalizacja</th>
-              <th className="text-left py-3 px-4">Data dodania</th>
-              <th className="text-left py-3 px-4">Pozostały czas</th>
-              <th className="text-left py-3 px-4">Status</th>
-              <th className="text-left py-3 px-4">Akcje</th>
+            <tr className="border-b border-[#E5E5E5]">
+              <th className="py-3 px-4 text-left">Przedmioty</th>
+              <th className="py-3 px-4 text-left">Powiat</th>
+              <th className="py-3 px-4 text-left">Miejsce znalezienia</th>
+              <th className="py-3 px-4 text-left">Data znalezienia</th>
+              <th className="py-3 px-4 text-left">Termin odbioru</th>
+              <th className="py-3 px-4 text-left">Pozostało dni</th>
+              <th className="py-3 px-4 text-left">Status</th>
+              <th className="py-3 px-4 text-left">Akcje</th>
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => {
-              const daysRemaining = getDaysRemaining(item.createdAt);
-              
-              return (
-                <tr key={item.id} className="border-b border-[#E5E5E5] hover:bg-[#F2F2F2]">
-                  <td className="py-3 px-4">{item.found_location}</td>
-                  <td className="py-3 px-4">{formatDate(item.foundDate)}</td>
-                  <td className="py-3 px-4">
-                    <div className="flex gap-2">
-                      <button
-                        className="text-[#0052A5] hover:underline focus:outline-none focus:ring-2 focus:ring-[#0052A5] rounded px-2 py-1"
-                      >
-                        Szczegóły
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+            {announcements.map((announcement) => (
+              <Item announcement={announcement}/>
+            ))}
           </tbody>
         </table>
       </div>
