@@ -7,6 +7,7 @@ from typing import List
 from enum import Enum
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+from django.http import JsonResponse
 
 class ItemType(Enum):
     SMALL = "small"
@@ -116,55 +117,73 @@ def multiple_records_to_xml(records: List[DataRecord]):
     return "Output of multiple_records_to_xml"
 
 @csrf_exempt
-def get_id(request):
+def get_id(request, id):
     if request.method == "GET":
         anouncement_id = request.GET.get("distinkt")
         mock_anouncements = get_mock_anouncements()
         for anouncement in mock_anouncements:
-            if str(anouncement.anouncement_id) == anouncement_id:
-                return HttpResponse(f"Dynamic GET response from producer '{anouncement}'")
-        return HttpResponse("Anouncement not found", status=404)
-    return HttpResponse("Static GET response from producer")
-#        records = read_all_records(count=-1)
-#        # record = filter_by_anouncement_id(records, anouncement_id)
-#        record = test_data_record
-#        out_xml_str = record_to_xml(record)
-#        return HttpResponse(f"Dynamic POST response from producer \'{out_xml_str}\'")
-#    else:
-#        return HttpResponse("Static POST response from producer")
+            if anouncement.anouncement_id == id:
+                data = {
+                    "id": anouncement.anouncement_id,
+                    "documentIdentyficator": anouncement.document_identyficator,
+                    "items": anouncement.items,
+                    "owner": anouncement.owner,
+                    "returned": anouncement.returned,
+                    "district": anouncement.district,
+                    "foundLocation": anouncement.found_location,
+                    "returnLocation": anouncement.return_location,
+                    "createdAt": anouncement.created_at.isoformat() if anouncement.created_at else None,
+                    "foundDate": anouncement.found_date.isoformat() if anouncement.found_date else None,
+                    "returnDate": anouncement.return_date.isoformat() if anouncement.return_date else None,
+                }
+                return JsonResponse(data, status=200, json_dumps_params={'ensure_ascii': False})
+
+        return JsonResponse(
+            {"error": "Anouncement not found"},
+            status=404
+        )
+
+    return JsonResponse(
+        {"error": "Method not allowed"},
+        status=405
+    )
 
 @csrf_exempt
-def get_all(request, district='all', count=-1):
+def get_all(request, district="all", count="-1"):
     if request.method != "GET":
-        return HttpResponse("Wrong method", status=400)
+        return JsonResponse({"error": "Wrong method"}, status=405)
 
-    GET = request.GET
+    records = get_mock_anouncements()
 
-    title, item_type, category, found_location, found_date = GET.get("title"), GET.get("item_type"), GET.get("category"), GET.get("found_location"), GET.get("found_date")
+    if district != "all":
+        records = [
+            a for a in records
+            if str(a.district).lower() == str(district).lower()
+        ]
 
-    records = dict[str:str]
+    count = int(count)
 
     if count == 0:
-        return HttpResponse("Count can't be equal to 0", status=400)
+        return JsonResponse({"error": "Count can't be equal to 0"}, status=400)
 
     if count > 0:
-        records = get_mock_anouncements()[:count]
-    else:
-        records = get_mock_anouncements()
+        records = records[:count]
 
-#    if district:
-#        records = filters.filter_by_distinkt(records, district)
-#
-#   if title:
-#       records = filters.filter_by_title(records, title)
-#   if item_type:
-#       records = filters.filter_by_item_type(records, item_type)
-#   if category:
-#       records = filters.filter_by_category(records, category)
-#   if found_location:
-#       records = filters.filter_by_found_location(records, found_location)
-#   if found_date:
-#       records = filters.filter_by_found_date(records, found_date)
+    data = []
 
-    # out_xml_str = multiple_records_to_xml(records)
-    return HttpResponse(records, headers={"Content-Type": "application/json"} ,status=200)
+    for anouncement in records:
+        data.append({
+            "anouncementId": anouncement.anouncement_id,
+            "documentIdentyficator": anouncement.document_identyficator,
+            "items": anouncement.items,
+            "owner": anouncement.owner,
+            "returned": anouncement.returned,
+            "district": anouncement.district,
+            "foundLocation": anouncement.found_location,
+            "returnLocation": anouncement.return_location,
+            "createdAt": anouncement.created_at.isoformat() if anouncement.created_at else None,
+            "foundDate": anouncement.found_date.isoformat() if anouncement.found_date else None,
+            "returnDate": anouncement.return_date.isoformat() if anouncement.return_date else None,
+        })
+
+    return JsonResponse(data, safe=False, status=200, json_dumps_params={'ensure_ascii': False})
