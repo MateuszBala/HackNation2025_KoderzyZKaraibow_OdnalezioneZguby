@@ -1,13 +1,13 @@
-import { FoundAnnouncement } from "@/interfaces/FoundAnnouncement";
+import { IAnnouncement } from "@/types/types";
 import { Badge } from "./ui/Badge";
 import { formatDate, getDaysRemaining } from "@/utils/helpers";
 import Link from "next/link";
 
 interface Props {
-    announcement: FoundAnnouncement
+    announcement: IAnnouncement
 }
 
-export function Item({announcement}: Props){
+export function AnnouncementItem({announcement}: Props){
     const daysRemaining = getDaysRemaining(announcement.returnTermin);
     const itemsCount = announcement.items.length;
     const itemTitles = announcement.items.map(item => item.title).join(', ');

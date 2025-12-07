@@ -1,17 +1,22 @@
-import { ItemFilters } from "@/interfaces/ItemFilters";
 import { Card } from "./ui/Card";
 import { DatePicker, FormField, Input, Select } from "./ui/FormField";
 import { Button } from "./ui/Button";
 import { formatToFieldDate } from "@/utils/helpers";
+import { IAnnouncementFilters } from "@/types/types";
 
-interface FilterCardProps {
-  filters: ItemFilters;
-  onFilterChange: (filters: ItemFilters) => void;
-  onApply: () => void;
+interface Props {
+  filters: IAnnouncementFilters;
+  onFilterChange: (filters: IAnnouncementFilters) => void;
   onClear: () => void;
 }
 
-export function Filters({ filters, onFilterChange, onApply, onClear }: FilterCardProps) {
+/**
+ * Announcement filters
+ * @param {IAnnouncementFilters} filters announcement filters
+ * @param {(filters: IAnnouncementFilters) => void} onFilterChange setter for filter changes
+ * @param {()=>void} onClear reseting filters
+ */
+export function Filters({ filters, onFilterChange, onClear }: Props) {
   return (
     <Card title="Filtry">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
@@ -78,7 +83,6 @@ export function Filters({ filters, onFilterChange, onApply, onClear }: FilterCar
       </div>
 
       <div className="flex gap-3">
-        <Button onClick={onApply}>Zastosuj filtry</Button>
         <Button variant="tertiary" onClick={onClear}>
           Wyczyść
         </Button>

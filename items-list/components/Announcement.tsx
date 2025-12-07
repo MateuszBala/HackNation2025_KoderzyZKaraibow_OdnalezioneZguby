@@ -1,24 +1,23 @@
-import { FoundAnnouncement } from "@/interfaces/FoundAnnouncement";
 import { useEffect, useState } from "react"
-import ErrorCard from "./ErrorCard";
-import LoadingCard from "./LoadingCard";
 import { Card } from "./ui/Card";
 import { formatDate, getDaysRemaining, getTypeLabel } from "@/utils/helpers";
 import { Badge } from "./ui/Badge";
 import { Button } from "./ui/Button";
 import { useRouter } from "next/navigation";
 import { Calendar, CheckCircle, Clock, MapPin, Package, XCircle } from "lucide-react";
+import { IAnnouncement } from "@/types/types";
+import { ErrorCard, LoadingCard } from "./cards";
 
 interface Props{
     office: string;
     id: number;
 }
 
-export default function ItemPage({id}:Props){
+export default function Announcement({id}:Props){
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
-    const [announcement, setAnnouncement] = useState<FoundAnnouncement>();
+    const [announcement, setAnnouncement] = useState<IAnnouncement>();
 
     useEffect(()=>{
         fetch(`${process.env.NEXT_PUBLIC_API_URL}${id}}`, {

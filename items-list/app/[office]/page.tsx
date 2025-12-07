@@ -1,5 +1,5 @@
 "use client"
-import ItemsList from "@/components/ItemsList";
+import ItemsList from "@/components/AnnouncementsList";
 import { useParams } from "next/navigation";
 
 export default function Page(){

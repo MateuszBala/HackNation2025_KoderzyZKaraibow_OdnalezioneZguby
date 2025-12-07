@@ -1,13 +1,12 @@
-import { AlertCircle, ChevronLeft, ChevronRight, Package } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Package } from 'lucide-react';
 import { Card } from './ui/Card';
-import { FoundAnnouncement } from '@/interfaces/FoundAnnouncement';
-import { Item } from './Item';
 import { Button } from './ui/Button';
-import LoadingCard from './LoadingCard';
-import ErrorCard from './ErrorCard';
+import { IAnnouncement } from '@/types/types';
+import { AnnouncementItem } from './AnnouncementItem';
+import { EmptyCard, ErrorCard, LoadingCard } from './cards';
 
-interface ItemsTableProps {
-  announcements: FoundAnnouncement[];
+interface Props {
+  announcements: IAnnouncement[];
   currentPage: number;
   itemsPerPage: number;
   totalItems: number;
@@ -16,7 +15,7 @@ interface ItemsTableProps {
   error: boolean;
 }
 
-export function ItemsTable({
+export function AnnouncementsTable({
   announcements,
   currentPage,
   itemsPerPage,
@@ -24,7 +23,7 @@ export function ItemsTable({
   loading,
   error,
   onPageChange,
-}: ItemsTableProps) {
+}: Props) {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage + 1;
   const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
@@ -35,20 +34,8 @@ export function ItemsTable({
   if (loading)
     return <LoadingCard/>
 
-  if (announcements.length === 0) {
-    return (
-      <Card>
-        <div className="text-center py-12">
-          <Package className="w-16 h-16 text-[#CCCCCC] mx-auto mb-4" />
-          <p className="text-[#666] mb-2">
-            Nie dodano jeszcze żadnych przedmiotów.
-          </p>
-        </div>
-      </Card>
-    );
-  }
-
-
+  if (announcements.length === 0)
+    return <EmptyCard/>
 
   return (
     <Card>
@@ -57,18 +44,16 @@ export function ItemsTable({
           <thead>
             <tr className="border-b border-[#E5E5E5]">
               <th className="py-3 px-4 text-left">Przedmioty</th>
-              <th className="py-3 px-4 text-left">Powiat</th>
               <th className="py-3 px-4 text-left">Miejsce znalezienia</th>
               <th className="py-3 px-4 text-left">Data znalezienia</th>
               <th className="py-3 px-4 text-left">Termin odbioru</th>
               <th className="py-3 px-4 text-left">Pozostało dni</th>
-              <th className="py-3 px-4 text-left">Status</th>
               <th className="py-3 px-4 text-left">Akcje</th>
             </tr>
           </thead>
           <tbody>
             {announcements.map((announcement) => (
-              <Item announcement={announcement}/>
+              <AnnouncementItem announcement={announcement}/>
             ))}
           </tbody>
         </table>

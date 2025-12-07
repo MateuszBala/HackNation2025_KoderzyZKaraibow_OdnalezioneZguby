@@ -113,32 +113,35 @@ def get_id(request):
         return HttpResponse("Static POST response from producer")
 
 @csrf_exempt
-def get_all(request):
-    if request.method == "GET":
-        records = dict[str:str]
-        count = request.GET.get("count")
-        if count == None:
-            return HttpResponse("ERROR: Record count missing!!!")
-        if int(count) == 0:
-            return HttpResponse("ERROR: Record count equal to 0!!!")
+def get_all(request, district='all', count=-1):
+    if request.method != "GET":
+        return HttpResponse("Wrong method", status=400)
+
+    GET = request.GET
+
+    title, item_type, category, found_location, found_date = GET.get("title"), GET.get("item_type"), GET.get("category"), GET.get("found_location"), GET.get("found_date")
+
+    records = dict[str:str]
+
+    if count == 0:
+        return HttpResponse("Count can't be equal to 0", status=400)
+
+    if count > 0:
         records = read_all_records(count)
-        distinkt = request.GET.get("distinkt")
-        if distinkt:
-            records = filters.filter_by_distinkt(records, distinkt)
-        title = request.GET.get("title")
-        if title:
-            records = filters.filter_by_title(records, title)
-        item_type = request.GET.get("item_type")
-        if item_type:
-            records = filters.filter_by_item_type(records, item_type)
-        category = request.GET.get("category")
-        if category:
-            records = filters.filter_by_category(records, category)
-        found_location = request.GET.get("found_location")
-        if found_location:
-            records = filters.filter_by_found_location(records, found_location)
-        found_date = request.GET.get("found_date")
-        if found_date:
-            records = filters.filter_by_found_date(records, found_date)
-            out_xml_str = multiple_records_to_xml(records)
-        return HttpResponse(f"This is placeholder for get_all request {out_xml_str}")
+
+    if district:
+        records = filters.filter_by_distinkt(records, district)
+
+    if title:
+        records = filters.filter_by_title(records, title)
+    if item_type:
+        records = filters.filter_by_item_type(records, item_type)
+    if category:
+        records = filters.filter_by_category(records, category)
+    if found_location:
+        records = filters.filter_by_found_location(records, found_location)
+    if found_date:
+        records = filters.filter_by_found_date(records, found_date)
+
+    # out_xml_str = multiple_records_to_xml(records)
+    return HttpResponse(records, headers={"Content-Type": "application/json"} ,status=200)

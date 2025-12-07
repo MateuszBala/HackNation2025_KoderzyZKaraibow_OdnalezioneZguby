@@ -1,6 +1,6 @@
 "use client"
 
-import ItemPage from "@/components/ItemPage";
+import ItemPage from "@/components/Announcement";
 import { useParams } from "next/navigation";
 
 export default function Page(){

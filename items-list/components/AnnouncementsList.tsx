@@ -1,10 +1,9 @@
-import { ItemFilters } from "@/interfaces/ItemFilters";
 import { useEffect, useState } from "react";
 import { Filters } from "./Filters";
-import { ItemsTable } from "./ItemsTable";
-import { FoundAnnouncement } from "@/interfaces/FoundAnnouncement";
+import { AnnouncementsTable } from "./AnnouncementsTable";
+import { IAnnouncement, IAnnouncementFilters } from "@/types/types";
 
-const emptyFilters: ItemFilters = {
+const emptyFilters: IAnnouncementFilters = {
   title: "",
   type: "",
   category: "", 
@@ -17,20 +16,24 @@ interface Params {
 }
 
 export default function ItemsList({office}: Params) {
-    const [announcements, setAnnouncements] = useState<FoundAnnouncement[]>([]);
-    const [filters, setFilters] = useState<ItemFilters>(emptyFilters);
+    const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
+    const [filters, setFilters] = useState<IAnnouncementFilters>(emptyFilters);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
     const itemsPerPage = 10;
 
     useEffect(()=>{
-        getData()
+        if(!loading){
+            setCurrentPage(1);
+            getData();
+        }
     }, [filters])
 
-    const handleApplyFilters = () => {
-        setCurrentPage(1);
-    };
+    useEffect(() => {
+        if(!loading)
+            getData();
+    }, [currentPage])
 
     const handleClearFilters = () => {
         setFilters(emptyFilters);
@@ -38,24 +41,24 @@ export default function ItemsList({office}: Params) {
     };
 
     const getData = async () => {
+        setLoading(true);
         const params = new URLSearchParams({
             title: filters.title, 
             type: filters.type, 
             category: filters.category, 
             foundLocation: filters.foundLocation, 
-            foundDate: filters.foundDate.toString()
+            foundDate: filters.foundDate.toString(),
+            currentPage: currentPage.toString()
         });
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}${office}/${itemsPerPage}?${params.toString()}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}announcements/${office}/${itemsPerPage}?${params.toString()}`, {
             method: "GET",
         }).then(async (res)=>{
-            if(res.ok){
+            if(res.ok)
                 setAnnouncements(await res.json());
-                setLoading(false);
-            }
+            
         }).catch(()=>{
-            setLoading(false)
             setError(true)
-        })
+        }).finally(() => {setLoading(false)})
     }
 
     return (
@@ -64,11 +67,10 @@ export default function ItemsList({office}: Params) {
                 <Filters
                     filters={filters}
                     onFilterChange={setFilters}
-                    onApply={handleApplyFilters}
                     onClear={handleClearFilters}
                 />
 
-                <ItemsTable
+                <AnnouncementsTable
                     announcements={announcements}
                     currentPage={currentPage}
                     itemsPerPage={itemsPerPage}
