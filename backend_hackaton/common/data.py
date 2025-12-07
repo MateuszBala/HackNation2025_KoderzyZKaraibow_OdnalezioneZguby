@@ -5,6 +5,8 @@ from xml.dom import minidom
 from dataclasses import dataclass, asdict
 from datetime import date
 import uuid
+from xml.dom import minidom
+
 
 class ItemType(Enum):
     SMALL = "small"
@@ -113,3 +115,19 @@ def record_to_xml(record: DataRecord):
     return reparsed.toprettyxml(indent="  ")
 
 
+def upload_xml(xml_data: str):
+    import os
+    from xml.dom import minidom
+
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(BASE_DIR, "../static/LostObjects.xml")
+
+    pretty_xml = minidom.parseString(xml_data).toprettyxml(indent="  ", encoding="utf-8")
+
+    # ✅ USUWANIE PUSTYCH LINII
+    pretty_xml = b"\n".join(line for line in pretty_xml.splitlines() if line.strip())
+
+    with open(file_path, "wb") as f:
+        f.write(pretty_xml)
+
+    print(f"✅ XML zapisany do: {file_path}")
