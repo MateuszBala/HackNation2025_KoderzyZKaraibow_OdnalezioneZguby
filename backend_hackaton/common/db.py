@@ -2,7 +2,14 @@ import sqlite3
 from contextlib import contextmanager
 from datetime import date
 from typing import List
-import data  # ← Import dataclasses from data.py
+
+import sys
+import os
+
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(parent_dir)
+
+from common import data
 
 @contextmanager
 def get_db_connection(db_name="datarecord.db"):

@@ -1,15 +1,85 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
-from . import filters
+from datetime import date
 from django.http import JsonResponse
 
 import sys
 import os
+import json
 
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
 from common import data
+from common import db
+
+class DataRecordDecoder(json.JSONDecoder):
+    def __init__(self, *args, **kwargs):
+        kwargs['object_hook'] = self.object_hook
+        super().__init__(*args, **kwargs)
+
+    def object_hook(self, obj):
+        if 'itemType' in obj:
+            obj['itemType'] = data.ItemType(obj['itemType'])
+
+        for date_field in ['createdAt', 'foundDate', 'returnDate']:
+            if date_field in obj:
+                obj[date_field.lower().replace('date', 'date')] = date.fromisoformat(obj[date_field])
+                del obj[date_field]
+
+        return obj
+
+def parse_json_to_datarecord(json_data: dict) -> data.DataRecord:
+    items_data = json_data['items']
+    items = []
+    for item_dict in items_data:
+        items.append(data.Item(**item_dict))
+
+    anouncement = data.Anouncement(
+        anouncement_id=json_data['anouncement_id'],
+        document_identyficator=json_data['document_identyficator'],
+        items=items,
+        owner=json_data['owner'],
+        returned=json_data['returned'],
+        district=json_data['district'],
+        found_location=json_data['found_location'],
+        return_location=json_data['return_location'],
+        created_at=json_data['created_at'],
+        found_date=json_data['found_date'],
+        return_date=json_data['return_date']
+    )
+
+    item = data.Item(**json_data['item'])
+
+    return data.DataRecord(anouncement=anouncement, item=item)
+
+@csrf_exempt
+def add(request):
+    if request.method == "POST":
+        try:
+            body_str = request.body.decode('utf-8')
+            json_data = json.loads(body_str, cls=DataRecordDecoder)
+            record = parse_json_to_datarecord(json_data)
+
+            db.save_datarecord(record)
+
+            return JsonResponse({
+                "status": "success",
+                "anouncement_id": record.anouncement.anouncement_id
+            })
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+        except KeyError as e:
+            return JsonResponse({"error": f"Missing field: {e}"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    return JsonResponse({"error": "POST only"}, status=405)
+
+@csrf_exempt
+def edit(request):
+    if request.method == "POST":
+        return JsonResponse(status=200)
 
 @csrf_exempt
 def get_id(request, id):

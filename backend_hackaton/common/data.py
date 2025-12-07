@@ -26,11 +26,11 @@ class Anouncement:
     owner: str               #  tylko dla uprawnionego użytkownika
     returned: bool
     district: str            #  powiat
-    found_location: str       #  miasto, ulica || miejsce
-    return_location: str      #  miasto, ulica || miejsce
+    found_location: str      #  miasto, ulica || miejsce
+    return_location: str     #  miasto, ulica || miejsce
     created_at: date
     found_date: date
-    return_date: date       #  termin odbioru
+    return_date: date        #  termin odbioru
 
 
 def itemToJSON(item: Item):
