@@ -61,7 +61,7 @@ export function AnnouncementsTable({
     <div>
       <div className="overflow-x-auto">
         {announcements.map((announcement) => (
-          <AnnouncementCard announcement={announcement}/>
+          <AnnouncementCard key={announcement.anouncementId} announcement={announcement}/>
         ))}
       </div>
 

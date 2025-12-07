@@ -24,11 +24,12 @@ export default function Announcement({id}:Props){
     const [announcement, setAnnouncement] = useState<IAnnouncement>();
 
     useEffect(()=>{
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}${id}}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}announcements/${id}`, {
             method: "GET",
         }).then(async (res)=>{
             if(res.ok){
-                setAnnouncement(await res.json());
+                const data = await res.json();
+                setAnnouncement({...data, createdAt: new Date(data.createdAt), foundDate: new Date(data.foundDate), returnDate: new Date(data.returnDate)});
                 setLoading(false);
             }
         }).catch(()=>{
@@ -43,7 +44,7 @@ export default function Announcement({id}:Props){
     if (loading)
         return <LoadingCard/>
 
-    const daysRemaining = getDaysRemaining(announcement.returnTermin);
+    const daysRemaining = getDaysRemaining(announcement.returnDate);
     const allItemsDestroyed = announcement.items.every(item => item.isDestroyed);
 
     return (
@@ -51,7 +52,7 @@ export default function Announcement({id}:Props){
             <Card>
                 <div className="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div>
-                    <h1 className="mb-2">Ogłoszenie #{announcement.id}</h1>
+                    <h1 className="mb-2">Ogłoszenie #{announcement.documentIdentyficator}</h1>
                     <div className="flex items-center gap-2">
                     {allItemsDestroyed ? (
                         <Badge variant="neutral">Zniszczony</Badge>
@@ -117,13 +118,12 @@ export default function Announcement({id}:Props){
                     </div>
                 )}
 
-                {/* Przedmioty */}
                 <div>
                     <h2 className="mb-4 pb-2 border-b border-[#E5E5E5]">Przedmioty</h2>
                     <div className="space-y-3">
                     {announcement.items.map((item: IItem) => (
                         <div 
-                        key={item.id} 
+                        key={item.itemId} 
                         className={`p-4 rounded-[2px] border ${item.isDestroyed ? 'bg-[#f8f9fa] border-[#dee2e6]' : 'bg-white border-[#E5E5E5]'}`}
                         >
                             <div className="flex items-start justify-between gap-4">
@@ -147,7 +147,6 @@ export default function Announcement({id}:Props){
                     </div>
                 </div>
 
-                {/* Informacje o miejscu */}
                 <div>
                     <h2 className="mb-4 pb-2 border-b border-[#E5E5E5]">Informacje o miejscu</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -188,7 +187,7 @@ export default function Announcement({id}:Props){
                         <Calendar className="w-5 h-5 text-[#0052A5]" />
                         <h4>Termin odbioru</h4>
                         </div>
-                        <p className="ml-7 text-[#666]">{formatDate(announcement.returnTermin)}</p>
+                        <p className="ml-7 text-[#666]">{formatDate(announcement.returnDate)}</p>
                     </div>
 
                     <div>
@@ -202,7 +201,7 @@ export default function Announcement({id}:Props){
                 </div>
 
                 <div className="text-[#999] border-t border-[#E5E5E5] pt-4">
-                    <p>ID ogłoszenia: #{announcement.id}</p>
+                    <p>ID ogłoszenia: #{announcement.anouncementId}</p>
                 </div>
                 </div>
             </Card>
