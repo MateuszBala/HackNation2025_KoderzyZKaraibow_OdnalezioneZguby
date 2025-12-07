@@ -1,36 +1,15 @@
 import { useState } from 'react';
 import { Trash2, Plus } from 'lucide-react';
-import { FoundAnnouncement, Item, ItemType } from '@/types/types';
+import { IAnnouncement, IItem, IItemType } from '@/types/types';
 import { Card } from '../ui/Card';
 import { FormField, Input, Select } from '../ui/FormField';
 import { Button } from '../ui/Button';
 import { useRouter } from 'next/navigation';
+import { categories, districts } from '@/utils/helpers';
 
 interface AnnouncementFormProps {
-  announcement?: FoundAnnouncement;
+  announcement?: IAnnouncement;
 }
-
-export const districts = [
-  'Warszawa',
-  'Kraków',
-  'Poznań',
-  'Wrocław',
-  'Gdańsk',
-  'Łódź',
-  'Katowice',
-  'Szczecin',
-];
-
-export const categories = [
-  'Dokumenty i portfele',
-  'Elektronika',
-  'Klucze',
-  'Biżuteria',
-  'Odzież',
-  'Bagaż',
-  'Sprzęt sportowy',
-  'Inne',
-];
 
 
 export function AddEditForm({ announcement }: AnnouncementFormProps) {
@@ -42,10 +21,10 @@ export function AddEditForm({ announcement }: AnnouncementFormProps) {
     foundLocation: announcement?.foundLocation || '',
     returnLocation: announcement?.returnLocation || '',
     foundDate: announcement?.foundDate ? announcement.foundDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-    returnTermin: announcement?.returnTermin ? announcement.returnTermin.toISOString().split('T')[0] : '',
+    returnTermin: announcement?.returnDate ? announcement.returnDate.toISOString().split('T')[0] : '',
   });
 
-  const [items, setItems] = useState<Omit<Item, 'id'>[]>(
+  const [items, setItems] = useState<Omit<IItem, 'itemId'>[]>(
     announcement?.items.map(item => ({
       title: item.title,
       type: item.type,
@@ -54,7 +33,7 @@ export function AddEditForm({ announcement }: AnnouncementFormProps) {
     })) || [
       {
         title: '',
-        type: 'small' as ItemType,
+        type: 'small' as IItemType,
         category: '',
         isDestroyed: false,
       }
@@ -104,8 +83,8 @@ export function AddEditForm({ announcement }: AnnouncementFormProps) {
     e.preventDefault();
     
     if (validate()) {
-      const itemsWithIds: Item[] = items.map((item, index) => ({
-        id: announcement?.items[index]?.id || Date.now() + index,
+      const itemsWithIds: IItem[] = items.map((item, index) => ({
+        itemId: announcement?.items[index]?.itemId || Date.now() + index,
         ...item,
       }));
 
@@ -120,7 +99,7 @@ export function AddEditForm({ announcement }: AnnouncementFormProps) {
     }
   };
 
-  const handleItemChange = (index: number, field: keyof Omit<Item, 'id'>, value: any) => {
+  const handleItemChange = (index: number, field: keyof Omit<IItem, 'id'>, value: any) => {
     const newItems = [...items];
     newItems[index] = { ...newItems[index], [field]: value };
     setItems(newItems);
@@ -136,7 +115,7 @@ export function AddEditForm({ announcement }: AnnouncementFormProps) {
       ...items,
       {
         title: '',
-        type: 'small' as ItemType,
+        type: 'small' as IItemType,
         category: '',
         isDestroyed: false,
       }

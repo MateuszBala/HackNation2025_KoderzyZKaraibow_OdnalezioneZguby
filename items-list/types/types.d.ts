@@ -17,7 +17,7 @@ export interface IAnnouncementFilters {
 }
 
 export interface IAnnouncement {
-    anouncementId:number;
+    announcementId:number;
     documentIdentyficator: string;  
     items: Item[];
     owner?: string;

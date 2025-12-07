@@ -1,29 +1,30 @@
-export type ItemType = 'small' | 'medium' | 'big';
+export type IItemType = 'small' | 'medium' | 'big';
 
-export interface AnnouncementFilter {
+export interface IAnnouncementFilter {
   district: string,
   title: string, 
   documentIdent: string;
   type: ItemType|"", 
   category: string, 
   foundLocation: string, 
-  foundDate: Date
+  foundDate?: Date
 }
 
-export interface ApiFilters extends AnnouncementFilter {
+export interface IApiFilters extends IAnnouncementFilter {
   foundDate: string
 }
 
-export interface Item{
-    id: number;
+export interface IItem{
+    itemId: number;
     title: string;
     type: ItemType;
     category: string;
     isDestroyed: boolean;
 }
 
-export interface FoundAnnouncement {
-    id:number;  
+export interface IAnnouncement {
+    announcementId:number;  
+    documentIdentyficator: string;
     items: Item[];
     owner?: string;
     returned: boolean;
@@ -32,10 +33,10 @@ export interface FoundAnnouncement {
     returnLocation: string;
     createdAt: Date;
     foundDate: Date;
-    returnTermin: Date;
+    returnDate: Date;
 }
 
-export interface User{
+export interface IUser{
   email: string;
   role: "user"|"admin"
 }

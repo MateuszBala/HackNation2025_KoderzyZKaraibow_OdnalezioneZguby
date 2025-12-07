@@ -25,7 +25,7 @@ export function AnnouncementCard({announcement}: Props){
                 <span>Termin odbioru: {formatDate(announcement.returnDate)}</span>
                 <div className="w-full text-end">
                     <Link
-                        href={`${encodeURIComponent(announcement.district)}/${announcement.anouncementId}`}
+                        href={`${encodeURIComponent(announcement.district)}/${announcement.announcementId}`}
                         className="text-[#0052A5] hover:underline focus:outline-none focus:ring-2 focus:ring-[#0052A5] rounded px-2 py-1"
                     >
                         Szczegóły

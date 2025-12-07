@@ -1,12 +1,69 @@
-import { ItemType } from "@/types/types";
+import { IAnnouncementFilter, IItemType } from "@/types/types";
 
-export function formatDate(date: Date): string {
+export const districts = [
+  'Warszawa',
+  'Kraków',
+  'Poznań',
+  'Wrocław',
+  'Gdańsk',
+  'Łódź',
+  'Katowice',
+  'Szczecin',
+];
+
+export const categories = [
+  'Dokumenty i portfele',
+  'Elektronika',
+  'Klucze',
+  'Biżuteria',
+  'Odzież',
+  'Bagaż',
+  'Sprzęt sportowy',
+  'Inne',
+];
+
+/**
+ * Transation from database to Polish
+ */
+export const labels: Record<IItemType, string> = {
+  small: 'Mały',
+  medium: 'Średni',
+  big: 'Duży',
+};
+
+/**
+ * initial filter object
+ */
+export const emptyFilters: IAnnouncementFilter = {
+  title: "",
+  type: "",
+  category: "",
+  foundLocation: "",
+  foundDate: undefined,
+  district: "",
+  documentIdent: ""
+};
+
+/**
+ * Formating date to dd.mm.yyyy
+ * @param {Date} date date to format 
+ * @returns {string} formated date
+ */
+export function formatDate(date: Date|string): string {
+  if(typeof date == 'string')
+    return date;
+
   const day = date.getDate().toString().padStart(2, '0');
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const year = date.getFullYear();
   return `${day}.${month}.${year}`;
 }
 
+/**
+ * Formating date to yyyy-mm-dd
+ * @param {Date} date date to format 
+ * @returns {string} formated date
+ */
 export function formatToFieldDate(date: Date): string {
   const day = date.getDate().toString().padStart(2, '0');
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -14,19 +71,14 @@ export function formatToFieldDate(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-export function getTypeLabel(type: ItemType): string {
-  const labels: Record<ItemType, string> = {
-    small: 'Mały',
-    medium: 'Średni',
-    big: 'Duży',
-  };
-  return labels[type];
-}
-
-export function getDaysRemaining(createdAt: Date): number {
+/**
+ * Calculator for remaining days
+ * @param {Date} termin date when item/s must be returned
+ * @returns {number} days between now and termin
+ */
+export function getDaysRemaining(termin: Date): number {
   const now = new Date();
-  const diff = now.getTime() - createdAt.getTime();
+  const diff = termin.getTime() - now.getTime();
   const daysPassed = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const legalRetentionPeriod = 90; // 90 days by law
-  return Math.max(0, legalRetentionPeriod - daysPassed);
+  return Math.max(0, daysPassed);
 }

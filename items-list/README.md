@@ -8,6 +8,8 @@
 ## Setup
 You need to have installed Node.js for this app to work. Get more info here: https://nodejs.org/en/download
 
+Also, you need to setup .env file with NEXT_PUBLIC_API_URL, like NEXT_PUBLIC_API_URL=http://localhost:8000/. It will allow the app to get announcements
+
 In order to run app, you need to run `npm install` to install required dependencies.
 
 After that, you can run the app via `npm run dev` if you want to host it on port 3000, or `npm run dev -- -p x` if you want to host it on other port, where "x" is port you choose.

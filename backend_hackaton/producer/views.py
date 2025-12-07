@@ -23,8 +23,8 @@ class Item:
     is_destroyed: bool
 
 @dataclass
-class Anouncement:
-    anouncement_id: int
+class Announcement:
+    announcement_id: int
     document_identyficator: str
     items: List[Item]
     owner: str               #  tylko dla uprawnionego użytkownika
@@ -48,7 +48,7 @@ def itemToJSON(item: Item):
 
 @dataclass
 class DataRecord:
-    anouncement: Anouncement
+    announcement: Announcement
     item: Item
 
 def get_mock_items():    return [
@@ -59,37 +59,37 @@ def get_mock_items():    return [
         Item(5, "Pierścionek", ItemType.BIG, "Jewelry", True),
     ]
 
-def get_mock_anouncements():
+def get_mock_announcements():
     items = get_mock_items()
     return [
-        Anouncement(1, "doc1", [items[0]], "Jan Kowalski", False, "Warszawa", "ul. Marszałkowska 1", "ul. Marszałkowska 1", date(2025, 1, 15), date(2025, 1, 10), date(2025, 2, 10)),
-        Anouncement(2, "doc2", [items[1]], "Anna Nowak", True, "Kraków", "ul. Floriańska 5", "ul. Floriańska 5", date(2025, 2, 20), date(2025, 2, 15), date(2025, 3, 15)),
-        Anouncement(3, "doc3", [items[2], items[4]], "Piotr Wiśniewski", False, "Gdańsk", "ul. Długa 10", "ul. Długa 10", date(2025, 3, 25), date(2025, 3, 20), date(2025, 4, 20))
+        Announcement(1, "doc1", [items[0]], "Jan Kowalski", False, "Warszawa", "ul. Marszałkowska 1", "ul. Marszałkowska 1", date(2025, 1, 15), date(2025, 1, 10), date(2025, 2, 10)),
+        Announcement(2, "doc2", [items[1]], "Anna Nowak", True, "Kraków", "ul. Floriańska 5", "ul. Floriańska 5", date(2025, 2, 20), date(2025, 2, 15), date(2025, 3, 15)),
+        Announcement(3, "doc3", [items[2], items[4]], "Piotr Wiśniewski", False, "Gdańsk", "ul. Długa 10", "ul. Długa 10", date(2025, 3, 25), date(2025, 3, 20), date(2025, 4, 20))
         ]
 
 def read_all_records(count):
     return str(count)
 
-def read_anouncement_id(anouncement_id):
+def read_announcement_id(announcement_id):
     return ""
 
 def record_to_xml(record: DataRecord):
     root = ET.Element("DataRecord")
-    anouncement = ET.SubElement(root, "Anouncement")
-    anouncement.set("id", str(record.anouncement.anouncement_id))
+    announcement = ET.SubElement(root, "Announcement")
+    announcement.set("id", str(record.announcement.announcement_id))
 
-    ET.SubElement(anouncement, "owner").text = record.anouncement.owner
-    ET.SubElement(anouncement, "district").text = record.anouncement.district
-    ET.SubElement(anouncement, "foundLocation").text = record.anouncement.found_location
-    ET.SubElement(anouncement, "returnLocation").text = record.anouncement.return_location
-    ET.SubElement(anouncement, "returned").text = str(record.anouncement.returned)
+    ET.SubElement(announcement, "owner").text = record.announcement.owner
+    ET.SubElement(announcement, "district").text = record.announcement.district
+    ET.SubElement(announcement, "foundLocation").text = record.announcement.found_location
+    ET.SubElement(announcement, "returnLocation").text = record.announcement.return_location
+    ET.SubElement(announcement, "returned").text = str(record.announcement.returned)
 
-    ET.SubElement(anouncement, "createdAt").text = record.anouncement.created_at.isoformat()
-    ET.SubElement(anouncement, "foundDate").text = record.anouncement.found_date.isoformat()
-    ET.SubElement(anouncement, "returnDate").text = record.anouncement.return_date.isoformat()
+    ET.SubElement(announcement, "createdAt").text = record.announcement.created_at.isoformat()
+    ET.SubElement(announcement, "foundDate").text = record.announcement.found_date.isoformat()
+    ET.SubElement(announcement, "returnDate").text = record.announcement.return_date.isoformat()
 
-    items_elem = ET.SubElement(anouncement, "items")
-    for item_title in record.anouncement.items:
+    items_elem = ET.SubElement(announcement, "items")
+    for item_title in record.announcement.items:
         ET.SubElement(items_elem, "item").text = item_title
 
     item = ET.SubElement(root, "Item")
@@ -110,27 +110,27 @@ def multiple_records_to_xml(records: List[DataRecord]):
 @csrf_exempt
 def get_id(request, id):
     if request.method == "GET":
-        anouncement_id = request.GET.get("distinkt")
-        mock_anouncements = get_mock_anouncements()
-        for anouncement in mock_anouncements:
-            if anouncement.anouncement_id == id:
+        announcement_id = request.GET.get("distinct")
+        mock_announcements = get_mock_announcements()
+        for announcement in mock_announcements:
+            if announcement.announcement_id == id:
                 data = {
-                    "anouncementId": anouncement.anouncement_id,
-                    "documentIdentyficator": anouncement.document_identyficator,
-                    "items": [itemToJSON(item) for item in anouncement.items],
-                    "owner": anouncement.owner,
-                    "returned": anouncement.returned,
-                    "district": anouncement.district,
-                    "foundLocation": anouncement.found_location,
-                    "returnLocation": anouncement.return_location,
-                    "createdAt": anouncement.created_at.isoformat() if anouncement.created_at else None,
-                    "foundDate": anouncement.found_date.isoformat() if anouncement.found_date else None,
-                    "returnDate": anouncement.return_date.isoformat() if anouncement.return_date else None,
+                    "announcementId": announcement.announcement_id,
+                    "documentIdentyficator": announcement.document_identyficator,
+                    "items": [itemToJSON(item) for item in announcement.items],
+                    "owner": announcement.owner,
+                    "returned": announcement.returned,
+                    "district": announcement.district,
+                    "foundLocation": announcement.found_location,
+                    "returnLocation": announcement.return_location,
+                    "createdAt": announcement.created_at.isoformat() if announcement.created_at else None,
+                    "foundDate": announcement.found_date.isoformat() if announcement.found_date else None,
+                    "returnDate": announcement.return_date.isoformat() if announcement.return_date else None,
                 }
                 return JsonResponse(data, status=200, json_dumps_params={'ensure_ascii': False})
 
         return JsonResponse(
-            {"error": "Anouncement not found"},
+            {"error": "Announcement not found"},
             status=404
         )
 
@@ -160,7 +160,7 @@ def get_all(request):
     except ValueError:
         return JsonResponse({"error": "count must be integer"}, status=400)
 
-    records = get_mock_anouncements()
+    records = get_mock_announcements()
 
     if district:
         records = [
@@ -192,19 +192,19 @@ def get_all(request):
 
     data = []
 
-    for anouncement in records:
+    for announcement in records:
         data.append({
-            "anouncementId": anouncement.anouncement_id,
-            "documentIdentyficator": anouncement.document_identyficator,
-            "items": [itemToJSON(item) for item in anouncement.items],
-            "owner": anouncement.owner,
-            "returned": anouncement.returned,
-            "district": anouncement.district,
-            "foundLocation": anouncement.found_location,
-            "returnLocation": anouncement.return_location,
-            "createdAt": anouncement.created_at.isoformat() if anouncement.created_at else None,
-            "foundDate": anouncement.found_date.isoformat() if anouncement.found_date else None,
-            "returnDate": anouncement.return_date.isoformat() if anouncement.return_date else None,
+            "announcementId": announcement.announcement_id,
+            "documentIdentyficator": announcement.document_identyficator,
+            "items": [itemToJSON(item) for item in announcement.items],
+            "owner": announcement.owner,
+            "returned": announcement.returned,
+            "district": announcement.district,
+            "foundLocation": announcement.found_location,
+            "returnLocation": announcement.return_location,
+            "createdAt": announcement.created_at.isoformat() if announcement.created_at else None,
+            "foundDate": announcement.found_date.isoformat() if announcement.found_date else None,
+            "returnDate": announcement.return_date.isoformat() if announcement.return_date else None,
         })
 
     return JsonResponse(data, safe=False, status=200, json_dumps_params={'ensure_ascii': False})

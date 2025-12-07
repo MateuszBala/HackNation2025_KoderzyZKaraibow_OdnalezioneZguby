@@ -26,14 +26,14 @@ export default function Navbar(){
           {!user && (
             <div className="flex items-center gap-2">
               <div className="relative">
-                <Button onClick={()=>{router.push("login")}}>Zaloguj</Button>
+                <Button onClick={()=>{router.push("/login")}}>Zaloguj</Button>
               </div>
             </div>
           )}
           {user && (
             <div className="flex items-center gap-2">
               <div className="relative">
-                <Button onClick={()=>{router.push("admin")}}>Admin</Button>
+                <Button onClick={()=>{router.push("/admin")}}>Admin</Button>
               </div>
             </div>
           )}

@@ -1,14 +1,14 @@
-import { FoundAnnouncement } from "@/types/types";
+import { IAnnouncement } from "@/types/types";
 import { Badge } from "../ui/Badge";
 import { formatDate, getDaysRemaining } from "@/utils/helpers";
 
 interface Props {
-  announcements: FoundAnnouncement[];
+  announcements: IAnnouncement[];
 }
 
 export function AnnouncementsList({ announcements }: Props) {
 
-    if (announcements.length === 0) {
+    if (!announcements || announcements.length === 0) {
         return (
             <div className="text-center py-12 text-[#666]">
                 <p>Brak ogłoszeń do wyświetlenia</p>
@@ -33,13 +33,13 @@ export function AnnouncementsList({ announcements }: Props) {
                 </thead>
                 <tbody>
                 {announcements.map((announcement) => {
-                    const daysRemaining = getDaysRemaining(announcement.returnTermin);
+                    const daysRemaining = getDaysRemaining(announcement.returnDate);
                     const itemsCount = announcement.items.length;
                     const itemTitles = announcement.items.map(item => item.title).join(', ');
                     const hasDestroyedItems = announcement.items.some(item => item.isDestroyed);
                     
                     return (
-                    <tr key={announcement.id} className="border-b border-[#E5E5E5] hover:bg-[#F2F2F2]">
+                    <tr key={announcement.announcementId} className="border-b border-[#E5E5E5] hover:bg-[#F2F2F2]">
                         <td className="py-3 px-4">
                         <div>
                             <div className="mb-1">
@@ -51,7 +51,7 @@ export function AnnouncementsList({ announcements }: Props) {
                         <td className="py-3 px-4">{announcement.district}</td>
                         <td className="py-3 px-4">{announcement.foundLocation}</td>
                         <td className="py-3 px-4">{formatDate(announcement.foundDate)}</td>
-                        <td className="py-3 px-4">{formatDate(announcement.returnTermin)}</td>
+                        <td className="py-3 px-4">{formatDate(announcement.returnDate)}</td>
                         <td className="py-3 px-4">
                         {hasDestroyedItems || announcement.returned ? (
                             <span className="text-[#999]">—</span>

@@ -1,19 +1,20 @@
 // Need to use the React-specific entry point to import createApi
-import { FoundAnnouncement, AnnouncementFilter, ApiFilters } from '@/types/types'
+import { IAnnouncement, IAnnouncementFilter, IApiFilters } from '@/types/types'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 // Define a service using a base URL and expected endpoints
 export const announcementsApi = createApi({
     reducerPath: 'announcementsApi',
     tagTypes: ['announcements'],
-    baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_URL }),
+    baseQuery: fetchBaseQuery({ baseUrl: `${process.env.NEXT_PUBLIC_API_URL}announcements` }),
     endpoints: (builder) => ({
         getAll: builder.query({
-            query: ({count, currentPage, filters}: {count: number, currentPage: number, filters: ApiFilters}) => ({
-                url: `/${filters.district}/${count}`,
+            query: ({count, currentPage, filters}: {count: number, currentPage: number, filters: IApiFilters}) => ({
+                url: `/`,
                 method: 'GET',
-                params: {currentPage, ...filters, foundDate: filters.foundDate.toLocaleString()}
+                params: {count: count, currentPage, ...filters, foundDate: filters.foundDate.toLocaleString()}
             }),
+            providesTags: ['announcements'],
         }),
         getById: builder.query({
             query: (id: number) => ({
@@ -27,7 +28,7 @@ export const announcementsApi = createApi({
                 method: 'POST',
                 body: patch,
             }),
-            transformResponse: (response: { data: FoundAnnouncement}, meta, arg) => response.data,
+            transformResponse: (response: { data: IAnnouncement}, meta, arg) => response.data,
             transformErrorResponse: (
                 response: { status: string | number },
                 meta,

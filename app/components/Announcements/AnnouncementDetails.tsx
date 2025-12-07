@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react"
-import { Card } from "./ui/Card";
-import { formatDate, getDaysRemaining, labels } from "@/utils/helpers";
-import { Badge } from "./ui/Badge";
-import { Button } from "./ui/Button";
-import { useRouter } from "next/navigation";
-import { Calendar, CheckCircle, Clock, MapPin, Package, XCircle } from "lucide-react";
 import { IAnnouncement, IItem, IItemType } from "@/types/types";
-import { ErrorCard, LoadingCard } from "./cards";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import ErrorCard from "../Cards/ErrorCard";
+import LoadingCard from "../Cards/LoadingCard";
+import { formatDate, getDaysRemaining, labels } from "@/utils/helpers";
+import { Card } from "../ui/Card";
+import { Badge } from "../ui/Badge";
+import { Button } from "../ui/Button";
+import { Calendar, CheckCircle, Clock, MapPin, Package, XCircle } from "lucide-react";
 
 interface Props{
     id: number;
@@ -16,7 +17,7 @@ interface Props{
  * Announcement details page
  * @param {number} id id of announcement
  */
-export default function Announcement({id}:Props){
+export default function AnnouncementDetails({id}:Props){
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);

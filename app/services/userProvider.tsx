@@ -1,16 +1,16 @@
 "use client"
-import { User } from "@/types/types";
+import { IUser } from "@/types/types";
 import { createContext, useState, ReactNode, useContext, useEffect } from 'react'
 
 interface State {
-    user?: User;
+    user?: IUser;
     logIn: (login: string, password: string) => Promise<boolean>
 }
 
 export const AuthContext = createContext<State | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }):ReactNode {
-    const [user, setUser] = useState<User|undefined>(undefined);
+    const [user, setUser] = useState<IUser|undefined>(undefined);
 
     useEffect(()=>{
       getUser().then(res => {

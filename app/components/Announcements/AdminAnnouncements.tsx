@@ -2,38 +2,25 @@ import { useGetAllQuery } from "@/services/announcements";
 import { AnnouncementsList } from "./AnnouncementList";
 import { useMemo, useState } from "react";
 import { Filters } from "./Filters";
-import { AnnouncementFilter } from "@/types/types";
 import LoadingCard from "../Cards/LoadingCard";
 import ErrorCard from "../Cards/ErrorCard";
 import { Button } from "../ui/Button";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-const emptyFilters: AnnouncementFilter = {
-    title: "",
-    type: "",
-    category: "",
-    foundLocation: "",
-    foundDate: new Date(),
-    documentIdent: "",
-    district: ""
-};
+import { IAnnouncement, IAnnouncementFilter } from "@/types/types";
+import { emptyFilters } from "@/utils/helpers";
 
 export default function AdminAnnouncements(){
     const router = useRouter();
-    const [filters, setFilters] = useState<AnnouncementFilter>(emptyFilters);
+    const [filters, setFilters] = useState<IAnnouncementFilter>(emptyFilters);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    const {data, isLoading, isError} = useGetAllQuery({count: itemsPerPage, currentPage, filters: {...filters, foundDate: filters.foundDate.toISOString()}});
-    const announcements = useMemo(()=>{
-        if(data?.data)
-            return data.data
+    const {data, isLoading, isError} = useGetAllQuery({count: itemsPerPage, currentPage, filters: {...filters, foundDate: filters.foundDate ? filters.foundDate.toISOString() : ""}});
+    const announcements = useMemo<IAnnouncement[]>(()=>{
+        if(data)
+            return data.map((announcement: IAnnouncement) => ({...announcement, createdAt: new Date(announcement.createdAt), returnDate: new Date(announcement.returnDate), foundDate: new Date(announcement.foundDate)}))
     }, [data])
-
-    const handleApplyFilters = () => {
-        setCurrentPage(1);
-    };
 
     const handleClearFilters = () => {
         setFilters(emptyFilters);
@@ -55,7 +42,6 @@ export default function AdminAnnouncements(){
             <Filters
                 filters={filters}
                 onFilterChange={setFilters}
-                onApply={handleApplyFilters}
                 onClear={handleClearFilters}
             />
 
