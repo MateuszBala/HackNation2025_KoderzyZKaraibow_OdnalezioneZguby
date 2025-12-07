@@ -115,7 +115,7 @@ def get_id(request, id):
         for anouncement in mock_anouncements:
             if anouncement.anouncement_id == id:
                 data = {
-                    "id": anouncement.anouncement_id,
+                    "anouncementId": anouncement.anouncement_id,
                     "documentIdentyficator": anouncement.document_identyficator,
                     "items": [itemToJSON(item) for item in anouncement.items],
                     "owner": anouncement.owner,
@@ -194,7 +194,7 @@ def get_all(request):
 
     for anouncement in records:
         data.append({
-            "id": anouncement.anouncement_id,
+            "anouncementId": anouncement.anouncement_id,
             "documentIdentyficator": anouncement.document_identyficator,
             "items": [itemToJSON(item) for item in anouncement.items],
             "owner": anouncement.owner,
