@@ -1,4 +1,24 @@
-import { IItemType } from "@/types/types";
+import { IAnnouncementFilters, IItemType } from "@/types/types";
+
+/**
+ * Transation from database to Polish
+ */
+export const labels: Record<IItemType, string> = {
+  small: 'Mały',
+  medium: 'Średni',
+  big: 'Duży',
+};
+
+/**
+ * initial filter object
+ */
+export const emptyFilters: IAnnouncementFilters = {
+  title: "",
+  type: "",
+  category: "", 
+  foundLocation: "", 
+  foundDate: new Date()
+};
 
 /**
  * Formating date to dd.mm.yyyy
@@ -23,12 +43,6 @@ export function formatToFieldDate(date: Date): string {
   const year = date.getFullYear();
   return `${year}-${month}-${day}`;
 }
-
-const labels: Record<IItemType, string> = {
-  small: 'Mały',
-  medium: 'Średni',
-  big: 'Duży',
-};
 
 /**
  * Calculator for remaining days

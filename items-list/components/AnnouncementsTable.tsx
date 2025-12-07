@@ -1,8 +1,7 @@
-import { ChevronLeft, ChevronRight, Package } from 'lucide-react';
-import { Card } from './ui/Card';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from './ui/Button';
 import { IAnnouncement } from '@/types/types';
-import { AnnouncementItem } from './AnnouncementItem';
+import { AnnouncementCard } from './AnnouncementCard';
 import { EmptyCard, ErrorCard, LoadingCard } from './cards';
 
 interface Props {
@@ -10,11 +9,21 @@ interface Props {
   currentPage: number;
   itemsPerPage: number;
   totalItems: number;
-  onPageChange: (page: number) => void;
   loading: boolean;
   error: boolean;
+  onPageChange: (page: number) => void;
 }
 
+/**
+ * Table of announcements
+ * @param {IAnnouncement[]} announcements table of announcements
+ * @param {number} currentPage current page
+ * @param {number} itemsPerPage number of max shown announcements at one
+ * @param {number} totalItems total announcements number
+ * @param {boolean} loading is loading
+ * @param {boolean} error is error
+ * @param {(page: number) => void} onPageChange page change handler
+ */
 export function AnnouncementsTable({
   announcements,
   currentPage,
@@ -24,8 +33,19 @@ export function AnnouncementsTable({
   error,
   onPageChange,
 }: Props) {
+  /**
+   * number of pages
+   */
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  /**
+   * prevous index
+   */
   const startIndex = (currentPage - 1) * itemsPerPage + 1;
+
+  /**
+   * next index
+   */
   const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
 
   if (error)
@@ -38,25 +58,11 @@ export function AnnouncementsTable({
     return <EmptyCard/>
 
   return (
-    <Card>
+    <div>
       <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-[#E5E5E5]">
-              <th className="py-3 px-4 text-left">Przedmioty</th>
-              <th className="py-3 px-4 text-left">Miejsce znalezienia</th>
-              <th className="py-3 px-4 text-left">Data znalezienia</th>
-              <th className="py-3 px-4 text-left">Termin odbioru</th>
-              <th className="py-3 px-4 text-left">Pozostało dni</th>
-              <th className="py-3 px-4 text-left">Akcje</th>
-            </tr>
-          </thead>
-          <tbody>
-            {announcements.map((announcement) => (
-              <AnnouncementItem announcement={announcement}/>
-            ))}
-          </tbody>
-        </table>
+        {announcements.map((announcement) => (
+          <AnnouncementCard announcement={announcement}/>
+        ))}
       </div>
 
       {totalPages > 1 && (
@@ -106,6 +112,6 @@ export function AnnouncementsTable({
           </div>
         </div>
       )}
-    </Card>
+    </div>
   );
 }

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import { Card } from "./ui/Card";
-import { formatDate, getDaysRemaining, getTypeLabel } from "@/utils/helpers";
+import { formatDate, getDaysRemaining, labels } from "@/utils/helpers";
 import { Badge } from "./ui/Badge";
 import { Button } from "./ui/Button";
 import { useRouter } from "next/navigation";
 import { Calendar, CheckCircle, Clock, MapPin, Package, XCircle } from "lucide-react";
-import { IAnnouncement } from "@/types/types";
+import { IAnnouncement, IItem, IItemType } from "@/types/types";
 import { ErrorCard, LoadingCard } from "./cards";
 
 interface Props{
@@ -13,6 +13,10 @@ interface Props{
     id: number;
 }
 
+/**
+ * Announcement details page
+ * @param {number} id id of announcement
+ */
 export default function Announcement({id}:Props){
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(true);
@@ -117,7 +121,7 @@ export default function Announcement({id}:Props){
                 <div>
                     <h2 className="mb-4 pb-2 border-b border-[#E5E5E5]">Przedmioty</h2>
                     <div className="space-y-3">
-                    {announcement.items.map((item) => (
+                    {announcement.items.map((item: IItem) => (
                         <div 
                         key={item.id} 
                         className={`p-4 rounded-[2px] border ${item.isDestroyed ? 'bg-[#f8f9fa] border-[#dee2e6]' : 'bg-white border-[#E5E5E5]'}`}
@@ -131,7 +135,7 @@ export default function Announcement({id}:Props){
                                     <div className="flex flex-wrap gap-2 text-[#666]">
                                         <span className="flex items-center gap-1">
                                         <Package className="w-4 h-4" />
-                                            {getTypeLabel(item.type)}
+                                            {labels[item.type as IItemType]}
                                         </span>
                                         <span>•</span>
                                         <span>{item.category}</span>
