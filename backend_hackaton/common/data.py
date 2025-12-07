@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 from dataclasses import dataclass, asdict
 from datetime import date
+import uuid
 
 class ItemType(Enum):
     SMALL = "small"
@@ -71,34 +72,44 @@ def read_anouncement_id(anouncement_id):
 
 def record_to_xml(record: DataRecord):
     root = ET.Element("DataRecord")
+
     anouncement = ET.SubElement(root, "Anouncement")
     anouncement.set("id", str(record.anouncement.anouncement_id))
 
-    ET.SubElement(anouncement, "owner").text = record.anouncement.owner
-    ET.SubElement(anouncement, "district").text = record.anouncement.district
-    ET.SubElement(anouncement, "foundLocation").text = record.anouncement.found_location
-    ET.SubElement(anouncement, "returnLocation").text = record.anouncement.return_location
+    ET.SubElement(anouncement, "documentIdentyficator").text = uuid.uuid4().hex
+    ET.SubElement(anouncement, "owner").text = str(record.anouncement.owner)
+    ET.SubElement(anouncement, "district").text = str(record.anouncement.district)
+    ET.SubElement(anouncement, "foundLocation").text = str(record.anouncement.found_location)
+    ET.SubElement(anouncement, "returnLocation").text = str(record.anouncement.return_location)
     ET.SubElement(anouncement, "returned").text = str(record.anouncement.returned)
 
     ET.SubElement(anouncement, "createdAt").text = record.anouncement.created_at.isoformat()
     ET.SubElement(anouncement, "foundDate").text = record.anouncement.found_date.isoformat()
-    ET.SubElement(anouncement, "returnDate").text = record.anouncement.return_date.isoformat()
+    ET.SubElement(anouncement, "returnDate").text = (
+        record.anouncement.return_date.isoformat()
+        if record.anouncement.return_date else ""
+    )
 
+    # ✅ POPRAWIONA SEKCJA ITEMS
     items_elem = ET.SubElement(anouncement, "items")
-    for item_title in record.anouncement.items:
-        ET.SubElement(items_elem, "item").text = item_title
 
-    item = ET.SubElement(root, "Item")
-    item.set("id", str(record.item.item_id))
-    ET.SubElement(item, "title").text = record.item.title
-    ET.SubElement(item, "type").text = record.item.item_type.value
-    ET.SubElement(item, "category").text = record.item.category
-    ET.SubElement(item, "isDestroyed").text = str(record.item.is_destroyed)
+    for item in record.anouncement.items:
+        ET.SubElement(items_elem, "item").text = item.title  # ✅ TYLKO STRING
 
-    # Pretty print XML
+    # ✅ SEKCJA POJEDYNCZEGO ITEMU
+    item_elem = ET.SubElement(root, "Item")
+    item_elem.set("id", str(record.item.item_id))
+
+    ET.SubElement(item_elem, "extIdent").text = uuid.uuid4().hex
+    ET.SubElement(item_elem, "title").text = record.item.title
+    ET.SubElement(item_elem, "type").text = record.item.item_type.value
+    ET.SubElement(item_elem, "category").text = record.item.category
+    ET.SubElement(item_elem, "isDestroyed").text = str(record.item.is_destroyed)
+
+    # ✅ Pretty print XML
     rough_string = ET.tostring(root, 'unicode')
     reparsed = minidom.parseString(rough_string)
+
     return reparsed.toprettyxml(indent="  ")
 
-def multiple_records_to_xml(records: List[DataRecord]):
-    return "Output of multiple_records_to_xml"
+
