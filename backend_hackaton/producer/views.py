@@ -7,25 +7,12 @@ from typing import List
 from enum import Enum
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+from django.http import JsonResponse
 
 class ItemType(Enum):
     SMALL = "small"
     MEDIUM = "medium"
     BIG = "big"
-
-@dataclass
-class Anouncement:
-    anouncement_id: int
-    document_identyficator: str
-    items: List[str]
-    owner: str               #  tylko dla uprawnionego użytkownika
-    returned: bool
-    district: str            #  powiat
-    found_location: str       #  miasto, ulica || miejsce
-    return_location: str      #  miasto, ulica || miejsce
-    created_at: date
-    found_date: date
-    return_date: date       #  termin odbioru
 
 @dataclass
 class Item:
@@ -36,29 +23,49 @@ class Item:
     is_destroyed: bool
 
 @dataclass
+class Anouncement:
+    anouncement_id: int
+    document_identyficator: str
+    items: List[Item]
+    owner: str               #  tylko dla uprawnionego użytkownika
+    returned: bool
+    district: str            #  powiat
+    found_location: str       #  miasto, ulica || miejsce
+    return_location: str      #  miasto, ulica || miejsce
+    created_at: date
+    found_date: date
+    return_date: date       #  termin odbioru
+
+
+def itemToJSON(item: Item):
+    return {
+        "item_id": item.item_id,
+        "title": item.title,
+        "item_type": item.item_type.value,
+        "category": item.category,
+        "is_destroyed": item.is_destroyed,
+    }
+
+@dataclass
 class DataRecord:
     anouncement: Anouncement
     item: Item
 
-#  FOR TEST ONLY
-test_data_record = DataRecord(
-    Anouncement(1,
-                "abc1",
-                ["12","34"],
-                "mrb",
-                True,
-                "dist9",
-                "Byd",
-                "Byd",
-                date(2025, 12, 12),
-                date(2025, 12, 12),
-                date(2025, 12, 12)),
-    Item(1,
-         "title",
-         ItemType("small"),
-         "exp",
-         True))
-#  END OF TEST DATA
+def get_mock_items():    return [
+        Item(1, "Portfel", ItemType.SMALL, "Accessories", False),
+        Item(2, "Plecak", ItemType.MEDIUM, "Bags", False),
+        Item(3, "Rower", ItemType.BIG, "Vehicles", True),
+        Item(4, "Rower", ItemType.BIG, "Vehicles", True),
+        Item(5, "Pierścionek", ItemType.BIG, "Jewelry", True),
+    ]
+
+def get_mock_anouncements():
+    items = get_mock_items()
+    return [
+        Anouncement(1, "doc1", [items[0]], "Jan Kowalski", False, "Warszawa", "ul. Marszałkowska 1", "ul. Marszałkowska 1", date(2025, 1, 15), date(2025, 1, 10), date(2025, 2, 10)),
+        Anouncement(2, "doc2", [items[1]], "Anna Nowak", True, "Kraków", "ul. Floriańska 5", "ul. Floriańska 5", date(2025, 2, 20), date(2025, 2, 15), date(2025, 3, 15)),
+        Anouncement(3, "doc3", [items[2], items[4]], "Piotr Wiśniewski", False, "Gdańsk", "ul. Długa 10", "ul. Długa 10", date(2025, 3, 25), date(2025, 3, 20), date(2025, 4, 20))
+        ]
 
 def read_all_records(count):
     return str(count)
@@ -101,47 +108,104 @@ def multiple_records_to_xml(records: List[DataRecord]):
     return "Output of multiple_records_to_xml"
 
 @csrf_exempt
-def get_id(request):
+def get_id(request, id):
     if request.method == "GET":
         anouncement_id = request.GET.get("distinkt")
-        records = read_all_records(count=-1)
-        # record = filter_by_anouncement_id(records, anouncement_id)
-        record = test_data_record
-        out_xml_str = record_to_xml(record)
-        return HttpResponse(f"Dynamic POST response from producer \'{out_xml_str}\'")
-    else:
-        return HttpResponse("Static POST response from producer")
+        mock_anouncements = get_mock_anouncements()
+        for anouncement in mock_anouncements:
+            if anouncement.anouncement_id == id:
+                data = {
+                    "id": anouncement.anouncement_id,
+                    "documentIdentyficator": anouncement.document_identyficator,
+                    "items": [itemToJSON(item) for item in anouncement.items],
+                    "owner": anouncement.owner,
+                    "returned": anouncement.returned,
+                    "district": anouncement.district,
+                    "foundLocation": anouncement.found_location,
+                    "returnLocation": anouncement.return_location,
+                    "createdAt": anouncement.created_at.isoformat() if anouncement.created_at else None,
+                    "foundDate": anouncement.found_date.isoformat() if anouncement.found_date else None,
+                    "returnDate": anouncement.return_date.isoformat() if anouncement.return_date else None,
+                }
+                return JsonResponse(data, status=200, json_dumps_params={'ensure_ascii': False})
+
+        return JsonResponse(
+            {"error": "Anouncement not found"},
+            status=404
+        )
+
+    return JsonResponse(
+        {"error": "Method not allowed"},
+        status=405
+    )
 
 @csrf_exempt
-def get_all(request, district='all', count=-1):
+def get_all(request):
     if request.method != "GET":
-        return HttpResponse("Wrong method", status=400)
+        return JsonResponse({"error": "Wrong method"}, status=405)
 
     GET = request.GET
 
-    title, item_type, category, found_location, found_date = GET.get("title"), GET.get("item_type"), GET.get("category"), GET.get("found_location"), GET.get("found_date")
+    count = GET.get("count", "-1")
+    district = GET.get("district")
+    title = GET.get("title")
+    item_type = GET.get("itemType")
+    category = GET.get("category")
+    found_location = GET.get("foundLocation")
+    found_date = GET.get("foundDate")
+    document_identificator = GET.get("documentIdentificator")
 
-    records = dict[str:str]
+    try:
+        count = int(count)
+    except ValueError:
+        return JsonResponse({"error": "count must be integer"}, status=400)
 
-    if count == 0:
-        return HttpResponse("Count can't be equal to 0", status=400)
-
-    if count > 0:
-        records = read_all_records(count)
+    records = get_mock_anouncements()
 
     if district:
-        records = filters.filter_by_distinkt(records, district)
+        records = [
+            a for a in records
+            if str(a.district).lower() == district.lower()
+        ]
 
     if title:
-        records = filters.filter_by_title(records, title)
-    if item_type:
-        records = filters.filter_by_item_type(records, item_type)
-    if category:
-        records = filters.filter_by_category(records, category)
-    if found_location:
-        records = filters.filter_by_found_location(records, found_location)
-    if found_date:
-        records = filters.filter_by_found_date(records, found_date)
+        records = [a for a in records if title.lower() in str(a.items).lower()]
 
-    # out_xml_str = multiple_records_to_xml(records)
-    return HttpResponse(records, headers={"Content-Type": "application/json"} ,status=200)
+    if found_location:
+        records = [
+            a for a in records
+            if found_location.lower() in str(a.found_location).lower()
+        ]
+
+    if document_identificator:
+        records = [
+            a for a in records
+            if str(a.document_identyficator).lower()
+            == document_identificator.lower()
+        ]
+
+    if count == 0:
+        return JsonResponse({"error": "count can't be 0"}, status=400)
+
+    if count > 0:
+        records = records[:count]
+
+    data = []
+
+    for anouncement in records:
+        data.append({
+            "anouncement_id": anouncement.anouncement_id,
+            "document_identyficator": anouncement.document_identyficator,
+            "items": [itemToJSON(item) for item in anouncement.items],
+            "owner": anouncement.owner,
+            "returned": anouncement.returned,
+            "district": anouncement.district,
+            "found_location": anouncement.found_location,
+            "return_location": anouncement.return_location,
+            "created_at": anouncement.created_at.isoformat() if anouncement.created_at else None,
+            "found_date": anouncement.found_date.isoformat() if anouncement.found_date else None,
+            "return_date": anouncement.return_date.isoformat() if anouncement.return_date else None,
+        })
+
+    return JsonResponse(data, safe=False, status=200)
+

@@ -25,7 +25,10 @@ export const emptyFilters: IAnnouncementFilters = {
  * @param {Date} date date to format 
  * @returns {string} formated date
  */
-export function formatDate(date: Date): string {
+export function formatDate(date: Date|string): string {
+  if(typeof date == 'string')
+    return date;
+
   const day = date.getDate().toString().padStart(2, '0');
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const year = date.getFullYear();
