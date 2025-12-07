@@ -22,10 +22,10 @@ export const announcementsApi = createApi({
                 method: 'GET'
             }),
         }),
-        getXML: builder.query({
+        generateXML: builder.mutation({
             query: () => ({
                 url: `/xml`,
-                method: 'GET'
+                method: 'POST'
             }),
         }),
         add: builder.mutation({
@@ -52,4 +52,4 @@ export const announcementsApi = createApi({
     }),
 })
 
-export const { useGetAllQuery, useGetByIdQuery, useAddMutation, useEditMutation, useGetXMLQuery } = announcementsApi
+export const { useGetAllQuery, useGetByIdQuery, useAddMutation, useEditMutation, useGenerateXMLMutation } = announcementsApi
