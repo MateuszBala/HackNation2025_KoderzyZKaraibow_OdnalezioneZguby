@@ -5,15 +5,15 @@ import { IAnnouncement, IAnnouncementFilters } from "@/types/types";
 import { emptyFilters } from "@/utils/helpers";
 
 interface Params {
-    distrinct: string;
+    district: string;
 }
 
 /**
  * Announcements list page
- * @param distrinct startostwo to look for announcements 
+ * @param district startostwo to look for announcements 
  * @returns 
  */
-export default function AnnouncementsList({distrinct}: Params) {
+export default function AnnouncementsList({district}: Params) {
     const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
     const [filters, setFilters] = useState<IAnnouncementFilters>(emptyFilters);
     const [currentPage, setCurrentPage] = useState(1);
@@ -46,7 +46,7 @@ export default function AnnouncementsList({distrinct}: Params) {
             foundDate: filters.foundDate.toString(),
             currentPage: page ? page.toString() : currentPage.toString()
         });
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}announcements/${distrinct}/${itemsPerPage}?${params.toString()}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}announcements/${district}/${itemsPerPage}?${params.toString()}`, {
             method: "GET",
         }).then(async (res)=>{
             if(res.ok)
