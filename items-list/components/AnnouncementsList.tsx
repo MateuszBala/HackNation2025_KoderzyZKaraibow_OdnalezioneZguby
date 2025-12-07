@@ -46,7 +46,7 @@ export default function AnnouncementsList({district}: Params) {
             foundDate: filters.foundDate.toString(),
             currentPage: page ? page.toString() : currentPage.toString()
         });
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}announcements/${district}/${itemsPerPage}?${params.toString()}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}announcements/${itemsPerPage}?district=${district}&${params.toString()}`, {
             method: "GET",
         }).then(async (res)=>{
             if(res.ok)

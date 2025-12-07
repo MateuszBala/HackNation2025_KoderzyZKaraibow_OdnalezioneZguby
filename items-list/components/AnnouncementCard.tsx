@@ -18,14 +18,14 @@ export function AnnouncementCard({announcement}: Props){
     const itemTitles = announcement.items.map(item => item.title).join(', ');
             
     return (
-        <Card key={announcement.id} title={itemTitles.length > 60 ? `${itemTitles.substring(0, 60)}...` : itemTitles} className="rounded-md bg-background border-b border-[#E5E5E5] hover:bg-[#F2F2F2]">
+        <Card title={itemTitles.length > 60 ? `${itemTitles.substring(0, 60)}...` : itemTitles} className="rounded-md bg-background border-b border-[#E5E5E5] hover:bg-[#F2F2F2]">
             <div className="flex flex-col gap-3">
                 <span>Miejsce znalezienia: {announcement.foundLocation}</span>
                 <span>Data znalezienia: {formatDate(announcement.foundDate)}</span>
-                <span>Termin odbioru: {formatDate(announcement.returnTermin)}</span>
-                <div className="w-full justify-end">
+                <span>Termin odbioru: {formatDate(announcement.returnDate)}</span>
+                <div className="w-full text-end">
                     <Link
-                        href={`${announcement.id}`}
+                        href={`${encodeURIComponent(announcement.district)}/${announcement.anouncementId}`}
                         className="text-[#0052A5] hover:underline focus:outline-none focus:ring-2 focus:ring-[#0052A5] rounded px-2 py-1"
                     >
                         Szczegóły
