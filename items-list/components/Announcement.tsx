@@ -9,7 +9,6 @@ import { IAnnouncement, IItem, IItemType } from "@/types/types";
 import { ErrorCard, LoadingCard } from "./cards";
 
 interface Props{
-    office: string;
     id: number;
 }
 

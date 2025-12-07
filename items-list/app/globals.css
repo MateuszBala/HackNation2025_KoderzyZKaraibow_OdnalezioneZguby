@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap");
 
 @import "tw-animate-css";
-
+@import "tailwindcss";
 /*---break--- */
 
 @custom-variant dark (&:is(.dark *));
@@ -483,6 +483,10 @@
 
   .table {
     display: table;
+  }
+
+  .h-0 {
+    height: 0;
   }
 
   .h-2 {
