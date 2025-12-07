@@ -194,17 +194,17 @@ def get_all(request):
 
     for anouncement in records:
         data.append({
-            "anouncement_id": anouncement.anouncement_id,
-            "document_identyficator": anouncement.document_identyficator,
+            "id": anouncement.anouncement_id,
+            "documentIdentyficator": anouncement.document_identyficator,
             "items": [itemToJSON(item) for item in anouncement.items],
             "owner": anouncement.owner,
             "returned": anouncement.returned,
             "district": anouncement.district,
-            "found_location": anouncement.found_location,
-            "return_location": anouncement.return_location,
-            "created_at": anouncement.created_at.isoformat() if anouncement.created_at else None,
-            "found_date": anouncement.found_date.isoformat() if anouncement.found_date else None,
-            "return_date": anouncement.return_date.isoformat() if anouncement.return_date else None,
+            "foundLocation": anouncement.found_location,
+            "returnLocation": anouncement.return_location,
+            "createdAt": anouncement.created_at.isoformat() if anouncement.created_at else None,
+            "foundDate": anouncement.found_date.isoformat() if anouncement.found_date else None,
+            "returnDate": anouncement.return_date.isoformat() if anouncement.return_date else None,
         })
 
     return JsonResponse(data, safe=False, status=200, json_dumps_params={'ensure_ascii': False})
