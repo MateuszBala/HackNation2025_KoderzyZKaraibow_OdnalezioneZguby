@@ -60,6 +60,21 @@ test_data_record = DataRecord(
          True))
 #  END OF TEST DATA
 
+
+def get_mock_items():    return [
+        Item(1, "Portfel", ItemType.SMALL, "Accessories", False),
+        Item(2, "Plecak", ItemType.MEDIUM, "Bags", False),
+        Item(3, "Rower", ItemType.BIG, "Vehicles", True),
+        Item(4, "Rower", ItemType.BIG, "Vehicles", True),
+        Item(5, "Pierścionek", ItemType.BIG, "Jewelry", True),
+    ]
+
+def get_mock_anouncements():   return [
+        Anouncement(1, "doc1", ["Portfel"], "Jan Kowalski", False, "Warszawa", "ul. Marszałkowska 1", "ul. Marszałkowska 1", date(2025, 1, 15), date(2025, 1, 10), date(2025, 2, 10)),
+        Anouncement(2, "doc2", ["Plecak"], "Anna Nowak", True, "Kraków", "ul. Floriańska 5", "ul. Floriańska 5", date(2025, 2, 20), date(2025, 2, 15), date(2025, 3, 15)),
+        Anouncement(3, "doc3", ["Rower","Pierścionek"], "Piotr Wiśniewski", False, "Gdańsk", "ul. Długa 10", "ul. Długa 10", date(2025, 3, 25), date(2025, 3, 20), date(2025, 4, 20))
+        ]
+
 def read_all_records(count):
     return str(count)
 
@@ -104,13 +119,19 @@ def multiple_records_to_xml(records: List[DataRecord]):
 def get_id(request):
     if request.method == "GET":
         anouncement_id = request.GET.get("distinkt")
-        records = read_all_records(count=-1)
-        # record = filter_by_anouncement_id(records, anouncement_id)
-        record = test_data_record
-        out_xml_str = record_to_xml(record)
-        return HttpResponse(f"Dynamic POST response from producer \'{out_xml_str}\'")
-    else:
-        return HttpResponse("Static POST response from producer")
+        mock_anouncements = get_mock_anouncements()
+        for anouncement in mock_anouncements:
+            if str(anouncement.anouncement_id) == anouncement_id:
+                return HttpResponse(f"Dynamic GET response from producer '{anouncement}'")
+        return HttpResponse("Anouncement not found", status=404)
+    return HttpResponse("Static GET response from producer")
+#        records = read_all_records(count=-1)
+#        # record = filter_by_anouncement_id(records, anouncement_id)
+#        record = test_data_record
+#        out_xml_str = record_to_xml(record)
+#        return HttpResponse(f"Dynamic POST response from producer \'{out_xml_str}\'")
+#    else:
+#        return HttpResponse("Static POST response from producer")
 
 @csrf_exempt
 def get_all(request, district='all', count=-1):
@@ -127,21 +148,23 @@ def get_all(request, district='all', count=-1):
         return HttpResponse("Count can't be equal to 0", status=400)
 
     if count > 0:
-        records = read_all_records(count)
+        records = get_mock_anouncements()[:count]
+    else:
+        records = get_mock_anouncements()
 
-    if district:
-        records = filters.filter_by_distinkt(records, district)
-
-    if title:
-        records = filters.filter_by_title(records, title)
-    if item_type:
-        records = filters.filter_by_item_type(records, item_type)
-    if category:
-        records = filters.filter_by_category(records, category)
-    if found_location:
-        records = filters.filter_by_found_location(records, found_location)
-    if found_date:
-        records = filters.filter_by_found_date(records, found_date)
+#    if district:
+#        records = filters.filter_by_distinkt(records, district)
+#
+#   if title:
+#       records = filters.filter_by_title(records, title)
+#   if item_type:
+#       records = filters.filter_by_item_type(records, item_type)
+#   if category:
+#       records = filters.filter_by_category(records, category)
+#   if found_location:
+#       records = filters.filter_by_found_location(records, found_location)
+#   if found_date:
+#       records = filters.filter_by_found_date(records, found_date)
 
     # out_xml_str = multiple_records_to_xml(records)
     return HttpResponse(records, headers={"Content-Type": "application/json"} ,status=200)
