@@ -207,5 +207,5 @@ def get_all(request):
             "return_date": anouncement.return_date.isoformat() if anouncement.return_date else None,
         })
 
-    return JsonResponse(data, safe=False, status=200)
+    return JsonResponse(data, safe=False, status=200, json_dumps_params={'ensure_ascii': False})
 
