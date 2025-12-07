@@ -2,20 +2,18 @@ import { useEffect, useState } from "react";
 import { Filters } from "./Filters";
 import { AnnouncementsTable } from "./AnnouncementsTable";
 import { IAnnouncement, IAnnouncementFilters } from "@/types/types";
-
-const emptyFilters: IAnnouncementFilters = {
-  title: "",
-  type: "",
-  category: "", 
-  foundLocation: "", 
-  foundDate: new Date()
-};
+import { emptyFilters } from "@/utils/helpers";
 
 interface Params {
-    office: string;
+    distrinct: string;
 }
 
-export default function ItemsList({office}: Params) {
+/**
+ * Announcements list page
+ * @param distrinct startostwo to look for announcements 
+ * @returns 
+ */
+export default function AnnouncementsList({distrinct}: Params) {
     const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
     const [filters, setFilters] = useState<IAnnouncementFilters>(emptyFilters);
     const [currentPage, setCurrentPage] = useState(1);
@@ -24,23 +22,21 @@ export default function ItemsList({office}: Params) {
     const itemsPerPage = 10;
 
     useEffect(()=>{
-        if(!loading){
-            setCurrentPage(1);
-            getData();
-        }
+        setCurrentPage(1);
+        getData();
     }, [filters])
-
-    useEffect(() => {
-        if(!loading)
-            getData();
-    }, [currentPage])
 
     const handleClearFilters = () => {
         setFilters(emptyFilters);
         setCurrentPage(1);
     };
 
-    const getData = async () => {
+    const hangleChangePage = (page: number) => {
+        setCurrentPage(page);
+        getData(page);
+    }
+
+    const getData = async (page?: number) => {
         setLoading(true);
         const params = new URLSearchParams({
             title: filters.title, 
@@ -48,9 +44,9 @@ export default function ItemsList({office}: Params) {
             category: filters.category, 
             foundLocation: filters.foundLocation, 
             foundDate: filters.foundDate.toString(),
-            currentPage: currentPage.toString()
+            currentPage: page ? page.toString() : currentPage.toString()
         });
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}announcements/${office}/${itemsPerPage}?${params.toString()}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}announcements/${distrinct}/${itemsPerPage}?${params.toString()}`, {
             method: "GET",
         }).then(async (res)=>{
             if(res.ok)
@@ -75,7 +71,7 @@ export default function ItemsList({office}: Params) {
                     currentPage={currentPage}
                     itemsPerPage={itemsPerPage}
                     totalItems={announcements.length}
-                    onPageChange={setCurrentPage}
+                    onPageChange={hangleChangePage}
                     error={error}
                     loading={loading}
                 />
