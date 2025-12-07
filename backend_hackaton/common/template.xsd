@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+
+    <xs:annotation>
+        <xs:documentation>Schemat XSD dla struktury ogłoszeń i elementów typu item.</xs:documentation>
+    </xs:annotation>
+
+    <xs:simpleType name="itemType">
+        <xs:annotation>
+            <xs:documentation>Typ wyliczeniowy określający wielkość przedmiotu.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="small"/>
+            <xs:enumeration value="medium"/>
+            <xs:enumeration value="big"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="item">
+        <xs:annotation>
+            <xs:documentation>Typ reprezentujący pojedynczy znaleziony przedmiot.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+
+            <xs:element name="extIdent" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Zewnętrzny identyfikator przedmiotu nadany przez dostawcę.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="intIdent" type="xs:int" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Wewnętrzny identyfikator systemowy używany do aktualizacji.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="itemId" type="xs:int">
+                <xs:annotation>
+                    <xs:documentation>Identyfikator przedmiotu w systemie źródłowym.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="title" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Tytuł w języku polskim.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="type" type="itemType">
+                <xs:annotation>
+                    <xs:documentation>Typ wielkości przedmiotu.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="category" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Kategoria przedmiotu.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="isDestroyed" type="xs:boolean">
+                <xs:annotation>
+                    <xs:documentation>Informacja czy przedmiot został zniszczony.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="itemsType">
+        <xs:annotation>
+            <xs:documentation>Lista przedmiotów przypisana do ogłoszenia.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="item" type="item" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="announcementType">
+        <xs:annotation>
+            <xs:documentation>Typ reprezentujący pojedyncze ogłoszenie.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+
+            <xs:element name="extIdent" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Zewnętrzny identyfikator ogłoszenia.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="intIdent" type="xs:int" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Wewnętrzny identyfikator ogłoszenia używany do aktualizacji.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="announcementId" type="xs:int">
+                <xs:annotation>
+                    <xs:documentation>Identyfikator ogłoszenia w systemie źródłowym.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="documentIdentyficator" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Identyfikator dokumentu powiązanego z ogłoszeniem.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="items" type="itemsType"/>
+
+            <xs:element name="owner" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Właściciel przedmiotu, jeśli znany.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="returned" type="xs:boolean">
+                <xs:annotation>
+                    <xs:documentation>Informacja czy przedmiot został odebrany.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="district" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Dzielnica, w której znaleziono przedmiot.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="foundLocation" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Miejsce znalezienia przedmiotu.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="returnLocation" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Miejsce odbioru przedmiotu.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="createdAt" type="xs:date">
+                <xs:annotation>
+                    <xs:documentation>Data utworzenia ogłoszenia.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="foundDate" type="xs:date">
+                <xs:annotation>
+                    <xs:documentation>Data znalezienia przedmiotu.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="returnDate" type="xs:date">
+                <xs:annotation>
+                    <xs:documentation>Data zwrotu przedmiotu.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="announcements">
+        <xs:annotation>
+            <xs:documentation>Korzeń dokumentu XML zawierający listę ogłoszeń.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="announcement" 
+                            type="announcementType" 
+                            minOccurs="1" 
+                            maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

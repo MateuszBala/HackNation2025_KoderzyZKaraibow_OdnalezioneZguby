@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<announcements>
+
+    <!-- ========================= -->
+    <!-- NOWE OGŁOSZENIE -->
+    <!-- ========================= -->
+    <announcement>
+        <extIdent>ANN-EXT-2025-0001</extIdent>
+
+        <announcementId>1001</announcementId>
+        <documentIdentyficator>DOC-ALFA-2025</documentIdentyficator>
+
+        <items>
+            <item>
+                <extIdent>ITEM-EXT-2025-0001</extIdent>
+
+                <itemId>1</itemId>
+                <title>Portfel skórzany</title>
+                <type>small</type>
+                <category>akcesoria</category>
+                <isDestroyed>false</isDestroyed>
+            </item>
+
+            <item>
+                <extIdent>ITEM-EXT-2025-0002</extIdent>
+
+                <itemId>2</itemId>
+                <title>Plecak turystyczny</title>
+                <type>medium</type>
+                <category>bagaż</category>
+                <isDestroyed>false</isDestroyed>
+            </item>
+        </items>
+
+        <returned>false</returned>
+        <district>Śródmieście</district>
+        <foundLocation>Dworzec Centralny</foundLocation>
+        <returnLocation>Biuro rzeczy znalezionych</returnLocation>
+        <createdAt>2025-03-01</createdAt>
+        <foundDate>2025-02-28</foundDate>
+        <returnDate>2025-03-10</returnDate>
+    </announcement>
+
+    <!-- ========================= -->
+    <!-- AKTUALIZOWANE OGŁOSZENIE -->
+    <!-- ========================= -->
+    <announcement>
+        <extIdent>ANN-EXT-2024-0099</extIdent>
+        <intIdent>845</intIdent>
+
+        <announcementId>2002</announcementId>
+        <documentIdentyficator>DOC-BETA-2024</documentIdentyficator>
+
+        <items>
+            <item>
+                <extIdent>ITEM-EXT-2024-0100</extIdent>
+                <intIdent>3210</intIdent>
+
+                <itemId>10</itemId>
+                <title>Telefon komórkowy</title>
+                <type>small</type>
+                <category>elektronika</category>
+                <isDestroyed>false</isDestroyed>
+            </item>
+
+            <item>
+                <extIdent>ITEM-EXT-2024-0101</extIdent>
+                <intIdent>3211</intIdent>
+
+                <itemId>11</itemId>
+                <title>Walizka podróżna</title>
+                <type>big</type>
+                <category>bagaż</category>
+                <isDestroyed>false</isDestroyed>
+            </item>
+        </items>
+
+        <owner>Jan Kowalski</owner>
+        <returned>true</returned>
+        <district>Mokotów</district>
+        <foundLocation>Lotnisko Chopina</foundLocation>
+        <returnLocation>Komenda Policji Mokotów</returnLocation>
+        <createdAt>2024-11-15</createdAt>
+        <foundDate>2024-11-14</foundDate>
+        <returnDate>2024-11-20</returnDate>
+    </announcement>
+
+</announcements>
