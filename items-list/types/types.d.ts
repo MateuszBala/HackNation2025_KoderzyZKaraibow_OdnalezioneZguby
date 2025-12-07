@@ -1,7 +1,7 @@
 export type IItemType = 'small' | 'medium' | 'big';
 
 export interface IItem{
-    id: number;
+    itemId: number;
     title: string;
     type: ItemType;
     category: string;
@@ -17,7 +17,8 @@ export interface IAnnouncementFilters {
 }
 
 export interface IAnnouncement {
-    id:number;  
+    anouncementId:number;
+    documentIdentyficator: string;  
     items: Item[];
     owner?: string;
     returned: boolean;
@@ -26,5 +27,5 @@ export interface IAnnouncement {
     returnLocation: string;
     createdAt: Date;
     foundDate: Date;
-    returnTermin: Date;
+    returnDate: Date;
 }
