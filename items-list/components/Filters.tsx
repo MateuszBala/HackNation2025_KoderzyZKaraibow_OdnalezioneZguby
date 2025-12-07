@@ -82,7 +82,7 @@ export function Filters({ filters, onFilterChange, onClear }: Props) {
 
           <FormField label="Czas znalezienia" id="filter-foundLocation">
             <DatePicker
-              value={formatToFieldDate(filters.foundDate)}
+              value={filters.foundDate ? formatToFieldDate(filters.foundDate) : ""}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 onFilterChange({ ...filters, foundDate: new Date(e.target.value) })
               }

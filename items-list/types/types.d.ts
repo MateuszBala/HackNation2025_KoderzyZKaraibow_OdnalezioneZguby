@@ -13,7 +13,7 @@ export interface IAnnouncementFilters {
   type: ItemType|"", 
   category: string, 
   foundLocation: string, 
-  foundDate: Date
+  foundDate?: Date
 }
 
 export interface IAnnouncement {

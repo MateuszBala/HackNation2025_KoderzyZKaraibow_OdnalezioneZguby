@@ -17,7 +17,7 @@ export const emptyFilters: IAnnouncementFilters = {
   type: "",
   category: "", 
   foundLocation: "", 
-  foundDate: new Date()
+  foundDate: undefined
 };
 
 /**

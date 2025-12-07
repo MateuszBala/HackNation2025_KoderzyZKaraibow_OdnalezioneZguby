@@ -39,14 +39,16 @@ export default function AnnouncementsList({district}: Params) {
     const getData = async (page?: number) => {
         setLoading(true);
         const params = new URLSearchParams({
+            count: itemsPerPage.toString(),
+            district: district,
             title: filters.title, 
             type: filters.type, 
             category: filters.category, 
             foundLocation: filters.foundLocation, 
-            foundDate: filters.foundDate.toString(),
+            foundDate: filters.foundDate ? filters.foundDate.toString() : "",
             currentPage: page ? page.toString() : currentPage.toString()
         });
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}announcements/${district}/${itemsPerPage}?${params.toString()}`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}announcements?${params.toString()}`, {
             method: "GET",
         }).then(async (res)=>{
             if(res.ok)
