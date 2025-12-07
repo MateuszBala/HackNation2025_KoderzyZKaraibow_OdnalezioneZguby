@@ -1,18 +1,27 @@
 import { IAnnouncement } from "@/types/types";
 import { Badge } from "../ui/Badge";
 import { formatDate, getDaysRemaining } from "@/utils/helpers";
+import { useRouter } from "next/navigation";
+import { Card } from "../ui/Card";
 
 interface Props {
   announcements: IAnnouncement[];
 }
 
+/**
+ * Table of admin announsements
+ * @param announcements - announcements list 
+ */
 export function AnnouncementsList({ announcements }: Props) {
+    const router = useRouter();
 
     if (!announcements || announcements.length === 0) {
         return (
-            <div className="text-center py-12 text-[#666]">
-                <p>Brak ogłoszeń do wyświetlenia</p>
-            </div>
+            <Card>
+                <div className="text-center py-12 text-[#666]">
+                    <p>Brak ogłoszeń do wyświetlenia</p>
+                </div>
+            </Card>
         );
     }
 
@@ -41,12 +50,7 @@ export function AnnouncementsList({ announcements }: Props) {
                     return (
                     <tr key={announcement.announcementId} className="border-b border-[#E5E5E5] hover:bg-[#F2F2F2]">
                         <td className="py-3 px-4">
-                        <div>
-                            <div className="mb-1">
                             {itemTitles.length > 60 ? `${itemTitles.substring(0, 60)}...` : itemTitles}
-                            </div>
-                            <Badge variant="neutral">{itemsCount} {itemsCount === 1 ? 'przedmiot' : itemsCount < 5 ? 'przedmioty' : 'przedmiotów'}</Badge>
-                        </div>
                         </td>
                         <td className="py-3 px-4">{announcement.district}</td>
                         <td className="py-3 px-4">{announcement.foundLocation}</td>
@@ -73,13 +77,13 @@ export function AnnouncementsList({ announcements }: Props) {
                         <td className="py-3 px-4">
                         <div className="flex gap-2">
                             <button
-                            onClick={() => {}}
+                            onClick={() => router.push(`/admin/edit/${announcement.announcementId}`)}
                             className="text-[#0052A5] hover:underline focus:outline-none focus:ring-2 focus:ring-[#0052A5] rounded px-2 py-1"
                             >
                             Edytuj
                             </button>
                             <button
-                            onClick={() => {}}
+                            onClick={() => router.push(`/admin/${announcement.announcementId}`)}
                             className="text-[#0052A5] hover:underline focus:outline-none focus:ring-2 focus:ring-[#0052A5] rounded px-2 py-1"
                             >
                             Szczegóły

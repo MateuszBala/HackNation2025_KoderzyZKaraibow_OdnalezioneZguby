@@ -15,8 +15,8 @@ export default function Page(){
     if(isError)
         return <ErrorCard/>
 
-    if(!data?.data)
+    if(!data)
         return;
 
-    return <AddEditForm announcement={data.data}/>
+    return <AddEditForm announcement={{...data, createdAt: new Date(data.createdAt), foundDate: new Date(data.foundDate), returnDate: new Date(data.foundDate)}}/>
 }

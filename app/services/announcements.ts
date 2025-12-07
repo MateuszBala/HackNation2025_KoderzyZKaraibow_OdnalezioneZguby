@@ -1,5 +1,5 @@
 // Need to use the React-specific entry point to import createApi
-import { IAnnouncement, IAnnouncementFilter, IApiFilters } from '@/types/types'
+import { IAnnouncement, IApiFilters } from '@/types/types'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 // Define a service using a base URL and expected endpoints
@@ -22,9 +22,15 @@ export const announcementsApi = createApi({
                 method: 'GET'
             }),
         }),
+        getXML: builder.query({
+            query: () => ({
+                url: `/xml`,
+                method: 'GET'
+            }),
+        }),
         add: builder.mutation({
             query: ({ ...patch }) => ({
-                url: ``,
+                url: `/`,
                 method: 'POST',
                 body: patch,
             }),
@@ -38,7 +44,7 @@ export const announcementsApi = createApi({
         }),
         edit: builder.mutation({
             query: ({ id, ...patch }) => ({
-                url: `${id}`,
+                url: `/${id}`,
                 method: 'PUT',
                 body: patch,
             }),
@@ -46,6 +52,4 @@ export const announcementsApi = createApi({
     }),
 })
 
-// Export hooks for usage in functional components, which are
-// auto-generated based on the defined endpoints
-export const { useGetAllQuery, useGetByIdQuery } = announcementsApi
+export const { useGetAllQuery, useGetByIdQuery, useAddMutation, useEditMutation, useGetXMLQuery } = announcementsApi

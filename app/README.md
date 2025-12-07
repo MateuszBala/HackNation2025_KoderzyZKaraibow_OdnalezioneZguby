@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+### Public lost items list v.0.1
 
-## Getting Started
+## Stack
+ - Next (16.0.7)
+ - lucide-react (0.556.0)
+ - tailwindcss (4.1.17)
 
-First, run the development server:
+## Setup
+You need to have installed Node.js for this app to work. Get more info here: https://nodejs.org/en/download
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Also, you need to setup .env file with NEXT_PUBLIC_API_URL, like NEXT_PUBLIC_API_URL=http://localhost:8000/. It will allow the app to get announcements, and do add/edit methods. You also need 
+NEXT_PUBLIC_LIST_URL for connection with public announcements list.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+In order to run app, you need to run `npm install` to install required dependencies.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+After that, you can run the app via `npm run dev` if you want to host it on port 3000, or `npm run dev -- -p x` if you want to host it on other port, where "x" is port you choose.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+You can also deploy your app by running `npm run build`, and then `npm run start`.
 
-## Learn More
+## Docs
+Pages:
+ - / - home root with iframe to public announcements list.
+ - /login - login page.
+ - /admin - admin page with announcements to edit, add method, and more announcements options.
+ - /admin/[id] - announcement details.
+ - /admin/add - add announcement form.
+ - /admin/edit/[id] - edit announcement.
 
-To learn more about Next.js, take a look at the following resources:
+To admin panel, only person with "admin" role can enter.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Documentations for each component and function are in their components files.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Serving
+This app supports being embed via iframe, like: <iframe src="http://localhost:300/starostwo-białystok"/>, with all it's features

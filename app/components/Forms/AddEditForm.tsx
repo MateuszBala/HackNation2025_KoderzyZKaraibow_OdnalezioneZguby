@@ -6,19 +6,26 @@ import { FormField, Input, Select } from '../ui/FormField';
 import { Button } from '../ui/Button';
 import { useRouter } from 'next/navigation';
 import { categories, districts } from '@/utils/helpers';
+import { useAddMutation, useEditMutation } from '@/services/announcements';
 
 interface AnnouncementFormProps {
   announcement?: IAnnouncement;
 }
 
-
+/**
+ * Add / Edit announcement form
+ * @param announcement optional announcement to edit 
+ */
 export function AddEditForm({ announcement }: AnnouncementFormProps) {
   const isEdit = !!announcement;
   const router = useRouter();
+  const [create] = useAddMutation();
+  const [edit] = useEditMutation()
 
   const [formData, setFormData] = useState({
     district: announcement?.district || '',
     foundLocation: announcement?.foundLocation || '',
+    owner: announcement?.owner || undefined,
     returnLocation: announcement?.returnLocation || '',
     foundDate: announcement?.foundDate ? announcement.foundDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
     returnTermin: announcement?.returnDate ? announcement.returnDate.toISOString().split('T')[0] : '',
@@ -42,6 +49,10 @@ export function AddEditForm({ announcement }: AnnouncementFormProps) {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  /**
+   * Validation
+   * @returns {boolean} true if no errors, false if errors
+   */
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
@@ -79,6 +90,10 @@ export function AddEditForm({ announcement }: AnnouncementFormProps) {
     return Object.keys(newErrors).length === 0;
   };
 
+  /**
+   * Submit Handler
+   * @param e form event
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -88,10 +103,18 @@ export function AddEditForm({ announcement }: AnnouncementFormProps) {
         ...item,
       }));
 
-      
+      if(isEdit)
+        edit({id: announcement.announcementId, ...formData, items: itemsWithIds}).then(() => router.push("/admin"));
+      else
+        create({...formData, items: itemsWithIds}).then(() => router.push("/admin"))
     }
   };
 
+  /**
+   * change inut handler
+   * @param field name of field
+   * @param value new value for field
+   */
   const handleChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
@@ -99,6 +122,12 @@ export function AddEditForm({ announcement }: AnnouncementFormProps) {
     }
   };
 
+  /**
+   * handler for change of item
+   * @param index index of item to change
+   * @param field changed field
+   * @param value new field value
+   */
   const handleItemChange = (index: number, field: keyof Omit<IItem, 'id'>, value: any) => {
     const newItems = [...items];
     newItems[index] = { ...newItems[index], [field]: value };
@@ -110,6 +139,9 @@ export function AddEditForm({ announcement }: AnnouncementFormProps) {
     }
   };
 
+  /**
+   * Adding new item
+   */
   const handleAddItem = () => {
     setItems([
       ...items,
@@ -122,6 +154,10 @@ export function AddEditForm({ announcement }: AnnouncementFormProps) {
     ]);
   };
 
+  /**
+   * Removing item
+   * @param index - index of removed item
+   */
   const handleRemoveItem = (index: number) => {
     if (items.length > 1) {
       const newItems = items.filter((_, i) => i !== index);
@@ -219,7 +255,24 @@ export function AddEditForm({ announcement }: AnnouncementFormProps) {
             </div>
           </div>
 
-          {/* Lista przedmiotów */}
+          <div>
+            <h2 className="mb-4 pb-2 border-b border-[#E5E5E5]">Informacje o Osobie</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                label="Znane dane o właścicielu"
+                error={errors.owner}
+              >
+                <Input
+                  type="text"
+                  value={formData.owner}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange('owner', e.target.value)}
+                  required
+                />
+              </FormField>
+            </div>
+          </div>
+
           <div>
             <div className="flex items-center justify-between mb-4 pb-2 border-b border-[#E5E5E5]">
               <h2>Przedmioty</h2>
@@ -246,6 +299,7 @@ export function AddEditForm({ announcement }: AnnouncementFormProps) {
                         onClick={() => handleRemoveItem(index)}
                         className="text-[#dc3545] hover:text-[#c82333] focus:outline-none focus:ring-2 focus:ring-[#dc3545] rounded p-1"
                         aria-label="Usuń przedmiot"
+                        disabled={isEdit}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

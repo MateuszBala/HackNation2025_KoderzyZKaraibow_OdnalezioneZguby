@@ -4,7 +4,8 @@ import { createContext, useState, ReactNode, useContext, useEffect } from 'react
 
 interface State {
     user?: IUser;
-    logIn: (login: string, password: string) => Promise<boolean>
+    logIn: (login: string, password: string) => Promise<boolean>;
+    logOut: () => void;
 }
 
 export const AuthContext = createContext<State | undefined>(undefined);
@@ -42,9 +43,15 @@ export function AuthProvider({ children }: { children: ReactNode }):ReactNode {
         throw new Error("Błędne dane logowania")
     }
 
+    function logOut(){
+      cookieStore.delete("user")
+      setUser(undefined);
+    }
+
     const contextValue = {
         user,
-        logIn
+        logIn,
+        logOut
     };
 
     return (

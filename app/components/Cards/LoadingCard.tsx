@@ -1,5 +1,8 @@
 import { Card } from "../ui/Card";
 
+/**
+ * Loading Card
+ */
 export default function LoadingCard(){
     return (
         <Card>
